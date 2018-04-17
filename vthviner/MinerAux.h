@@ -45,7 +45,7 @@
 #include <libvthash-cuda/CUDAMiner.h>
 #endif
 #include <libpoolprotocols/PoolManager.h>
-#include <libpoolprotocols/vtratum/EthStratumClient.h>
+#include <libpoolprotocols/stratum/EthStratumClient.h>
 #include <libpoolprotocols/getwork/EthGetworkClient.h>
 #include <libpoolprotocols/testing/SimulateClient.h>
 
@@ -673,7 +673,7 @@ public:
 			exit(0);
 		}
 
-		auto* build = vthviner_get_buildinfo();
+		auto* build = ethminer_get_buildinfo();
 		minelog << "vthviner version " << build->project_version;
 		minelog << "Build: " << build->system_name << "/" << build->build_type
 			 << "+git." << string(build->git_commit_hash).substr(0, 7);

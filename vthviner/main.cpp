@@ -55,7 +55,7 @@ void help()
 
 void version()
 {
-    auto* bi = vthviner_get_buildinfo();
+    auto* bi = ethminer_get_buildinfo();
     cout << "vthviner version " << bi->project_version << "+git." << string(bi->git_commit_hash).substr(0, 7) << endl;
     cout << "Build: " << bi->system_name << "/" << bi->build_type << "/" << bi->compiler_id << endl;
     exit(0);

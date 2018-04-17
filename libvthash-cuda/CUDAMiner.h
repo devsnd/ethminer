@@ -73,7 +73,7 @@ public:
 
 	bool cuda_init(
 		size_t numDevices,
-		ethash_light_t _light,
+		vthash_light_t _light,
 		uint8_t const* _lightData,
 		uint64_t _lightSize,
 		unsigned _deviceId,

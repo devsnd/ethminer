@@ -30,13 +30,13 @@
 #include "data_sizes.h"
 #include "sha3.h"
 
-uint64_t ethash_get_datasize(uint64_t const block_number)
+uint64_t vthash_get_datasize(uint64_t const block_number)
 {
 	assert(block_number / ETHASH_EPOCH_LENGTH < 2048);
 	return dag_sizes[block_number / ETHASH_EPOCH_LENGTH];
 }
 
-uint64_t ethash_get_cachesize(uint64_t const block_number)
+uint64_t vthash_get_cachesize(uint64_t const block_number)
 {
 	assert(block_number / ETHASH_EPOCH_LENGTH < 2048);
 	return cache_sizes[block_number / ETHASH_EPOCH_LENGTH];
@@ -45,10 +45,10 @@ uint64_t ethash_get_cachesize(uint64_t const block_number)
 // Follows Sergio's "STRICT MEMORY HARD HASHING FUNCTIONS" (2014)
 // https://bitslog.files.wordpress.com/2013/12/memohash-v0-3.pdf
 // SeqMemoHash(s, R, N)
-bool static ethash_compute_cache_nodes(
+bool static vthash_compute_cache_nodes(
 	node* const nodes,
 	uint64_t cache_size,
-	ethash_h256_t const* seed
+	vthash_h256_t const* seed
 )
 {
 	if (cache_size % sizeof(node) != 0) {
@@ -82,7 +82,7 @@ bool static ethash_compute_cache_nodes(
 void vthash_calculate_dag_item(
 	node* const ret,
 	uint32_t node_index,
-	ethash_light_t const light
+	vthash_light_t const light
 )
 {
 	uint32_t num_parent_nodes = (uint32_t) (light->cache_size / sizeof(node));
@@ -131,12 +131,12 @@ void vthash_calculate_dag_item(
 	SHA3_512(ret->bytes, ret->bytes, sizeof(node));
 }
 
-static bool ethash_hash(
-	ethash_return_value_t* ret,
+static bool vthash_hash(
+	vthash_return_value_t* ret,
 	node const* full_nodes,
-	ethash_light_t const light,
+	vthash_light_t const light,
 	uint64_t full_size,
-	ethash_h256_t const header_hash,
+	vthash_h256_t const header_hash,
 	uint64_t const nonce
 )
 {
@@ -214,19 +214,19 @@ static bool ethash_hash(
 	return true;
 }
 
-ethash_h256_t ethash_get_seedhash(uint64_t block_number)
+vthash_h256_t vthash_get_seedhash(uint64_t block_number)
 {
-	ethash_h256_t ret;
-	ethash_h256_reset(&ret);
+	vthash_h256_t ret;
+	vthash_h256_reset(&ret);
 	uint64_t const epochs = block_number / ETHASH_EPOCH_LENGTH;
 	for (uint32_t i = 0; i < epochs; ++i)
 		SHA3_256(&ret, (uint8_t*)&ret, 32);
 	return ret;
 }
 
-ethash_light_t ethash_light_new_internal(uint64_t cache_size, ethash_h256_t const* seed)
+vthash_light_t vthash_light_new_internal(uint64_t cache_size, vthash_h256_t const* seed)
 {
-	struct ethash_light *ret;
+	struct vthash_light *ret;
 	ret = calloc(sizeof(*ret), 1);
 	if (!ret) {
 		return NULL;
@@ -236,7 +236,7 @@ ethash_light_t ethash_light_new_internal(uint64_t cache_size, ethash_h256_t cons
 		goto fail_free_light;
 	}
 	node* nodes = (node*)ret->cache;
-	if (!ethash_compute_cache_nodes(nodes, cache_size, seed)) {
+	if (!vthash_compute_cache_nodes(nodes, cache_size, seed)) {
 		goto fail_free_cache_mem;
 	}
 	ret->cache_size = cache_size;
@@ -249,16 +249,16 @@ fail_free_light:
 	return NULL;
 }
 
-ethash_light_t ethash_light_new(uint64_t block_number)
+vthash_light_t vthash_light_new(uint64_t block_number)
 {
-	ethash_h256_t seedhash = ethash_get_seedhash(block_number);
-	ethash_light_t ret;
-	ret = ethash_light_new_internal(ethash_get_cachesize(block_number), &seedhash);
+	vthash_h256_t seedhash = vthash_get_seedhash(block_number);
+	vthash_light_t ret;
+	ret = vthash_light_new_internal(vthash_get_cachesize(block_number), &seedhash);
 	ret->block_number = block_number;
 	return ret;
 }
 
-void ethash_light_delete(ethash_light_t light)
+void vthash_light_delete(vthash_light_t light)
 {
 	if (light->cache) {
 		free(light->cache);
@@ -266,27 +266,27 @@ void ethash_light_delete(ethash_light_t light)
 	free(light);
 }
 
-ethash_return_value_t ethash_light_compute_internal(
-	ethash_light_t light,
+vthash_return_value_t vthash_light_compute_internal(
+	vthash_light_t light,
 	uint64_t full_size,
-	ethash_h256_t const header_hash,
+	vthash_h256_t const header_hash,
 	uint64_t nonce
 )
 {
-  	ethash_return_value_t ret;
+  	vthash_return_value_t ret;
 	ret.success = true;
-	if (!ethash_hash(&ret, NULL, light, full_size, header_hash, nonce)) {
+	if (!vthash_hash(&ret, NULL, light, full_size, header_hash, nonce)) {
 		ret.success = false;
 	}
 	return ret;
 }
 
-ethash_return_value_t ethash_light_compute(
-	ethash_light_t light,
-	ethash_h256_t const header_hash,
+vthash_return_value_t vthash_light_compute(
+	vthash_light_t light,
+	vthash_h256_t const header_hash,
 	uint64_t nonce
 )
 {
-	uint64_t full_size = ethash_get_datasize(light->block_number);
-	return ethash_light_compute_internal(light, full_size, header_hash, nonce);
+	uint64_t full_size = vthash_get_datasize(light->block_number);
+	return vthash_light_compute_internal(light, full_size, header_hash, nonce);
 }

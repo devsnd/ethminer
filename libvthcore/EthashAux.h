@@ -45,7 +45,7 @@ public:
 		~LightAllocation();
 		bytesConstRef data() const;
 		Result compute(h256 const& _headerHash, uint64_t _nonce) const;
-		ethash_light_t light;
+		vthash_light_t light;
 		uint64_t size;
 	};
 

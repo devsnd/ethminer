@@ -47,13 +47,13 @@ EthashAux::LightType EthashAux::light(int epoch)
 EthashAux::LightAllocation::LightAllocation(int epoch)
 {
     int blockNumber = epoch * ETHASH_EPOCH_LENGTH;
-    light = ethash_light_new(blockNumber);
-    size = ethash_get_cachesize(blockNumber);
+    light = vthash_light_new(blockNumber);
+    size = vthash_get_cachesize(blockNumber);
 }
 
 EthashAux::LightAllocation::~LightAllocation()
 {
-	ethash_light_delete(light);
+	vthash_light_delete(light);
 }
 
 bytesConstRef EthashAux::LightAllocation::data() const
@@ -63,7 +63,7 @@ bytesConstRef EthashAux::LightAllocation::data() const
 
 Result EthashAux::LightAllocation::compute(h256 const& _headerHash, uint64_t _nonce) const
 {
-	ethash_return_value r = ethash_light_compute(light, *(ethash_h256_t*)_headerHash.data(), _nonce);
+	vthash_return_value r = vthash_light_compute(light, *(vthash_h256_t*)_headerHash.data(), _nonce);
 	if (!r.success)
 		BOOST_THROW_EXCEPTION(DAGCreationFailure());
 	return Result{h256((uint8_t*)&r.result, h256::ConstructFromPointer), h256((uint8_t*)&r.mix_hash, h256::ConstructFromPointer)};

@@ -303,7 +303,7 @@ void EthStratumClient::connect_handler(const boost::system::error_code& ec, tcp:
 				break;
 			case EthStratumClient::ETHEREUMSTRATUM:
 				m_authorized = true;
-				os << "{\"id\": 1, \"method\": \"mining.subscribe\", \"params\": [\"vthviner/" << vthviner_get_buildinfo()->project_version << "\",\"EthereumStratum/1.0.0\"]}\n";
+				os << "{\"id\": 1, \"method\": \"mining.subscribe\", \"params\": [\"vthviner/" << ethminer_get_buildinfo()->project_version << "\",\"EthereumStratum/1.0.0\"]}\n";
 				break;
 		}
 
@@ -513,7 +513,7 @@ void EthStratumClient::processReponse(Json::Value& responseObject)
                         m_current.header = h256(sHeaderHash);
 						m_current.boundary = h256();
 						diffToTarget((uint32_t*)m_current.boundary.data(), m_nextWorkDifficulty);
-						m_current.startNonce = ethash_swap_u64(*((uint64_t*)m_extraNonce.data()));
+						m_current.startNonce = vthash_swap_u64(*((uint64_t*)m_extraNonce.data()));
 						m_current.exSizeBits = m_extraNonceHexSize * 4;
 						m_current.job_len = job.size();
 						if (m_connection.Version() == EthStratumClient::ETHEREUMSTRATUM)
@@ -580,7 +580,7 @@ void EthStratumClient::processReponse(Json::Value& responseObject)
 		}
 		else if (method == "client.get_version")
 		{
-			os << "{\"error\": null, \"id\" : " << id << ", \"result\" : \"" << vthviner_get_buildinfo()->project_version << "\"}\n";
+			os << "{\"error\": null, \"id\" : " << id << ", \"result\" : \"" << ethminer_get_buildinfo()->project_version << "\"}\n";
 			async_write_with_response();
 		}
 		break;

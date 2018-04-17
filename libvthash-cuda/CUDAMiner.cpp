@@ -271,7 +271,7 @@ bool CUDAMiner::cuda_configureGPU(
 		cudalog << "Using grid size " << s_gridSize << ", block size " << s_blockSize;
 
 		// by default let's only consider the DAG of the first epoch
-		uint64_t dagSize = ethash_get_datasize(_currentBlock);
+		uint64_t dagSize = vthash_get_datasize(_currentBlock);
 		int devicesCount = static_cast<int>(numDevices);
 		for (int i = 0; i < devicesCount; i++)
 		{
@@ -310,7 +310,7 @@ bool CUDAMiner::s_noeval = false;
 
 bool CUDAMiner::cuda_init(
 	size_t numDevices,
-	ethash_light_t _light,
+	vthash_light_t _light,
 	uint8_t const* _lightData,
 	uint64_t _lightSize,
 	unsigned _deviceId,
@@ -337,7 +337,7 @@ bool CUDAMiner::cuda_init(
 		m_search_buf = new volatile search_results *[s_numStreams];
 		m_streams = new cudaStream_t[s_numStreams];
 
-		uint64_t dagSize = ethash_get_datasize(_light->block_number);
+		uint64_t dagSize = vthash_get_datasize(_light->block_number);
 		uint32_t dagSize128   = (unsigned)(dagSize / ETHASH_MIX_BYTES);
 		uint32_t lightSize64 = (unsigned)(_lightSize / sizeof(node));
 

@@ -21,7 +21,7 @@ struct buildinfo
     const char* git_commit_hash;
 };
 
-const struct buildinfo* vthviner_get_buildinfo();
+const struct buildinfo* ethminer_get_buildinfo();
 
 #ifdef __cplusplus
 }

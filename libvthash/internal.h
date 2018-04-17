@@ -31,27 +31,27 @@ typedef union node {
 
 } node;
 
-static inline void ethash_h256_reset(ethash_h256_t* hash)
+static inline void vthash_h256_reset(vthash_h256_t* hash)
 {
 	memset(hash, 0, 32);
 }
 
-struct ethash_light {
+struct vthash_light {
 	void* cache;
 	uint64_t cache_size;
 	uint64_t block_number;
 };
 
 /**
- * Allocate and initialize a new ethash_light handler. Internal version
+ * Allocate and initialize a new vthash_light handler. Internal version
  *
  * @param cache_size    The size of the cache in bytes
  * @param seed          Block seedhash to be used during the computation of the
  *                      cache nodes
- * @return              Newly allocated ethash_light handler or NULL in case of
- *                      ERRNOMEM or invalid parameters used for @ref ethash_compute_cache_nodes()
+ * @return              Newly allocated vthash_light handler or NULL in case of
+ *                      ERRNOMEM or invalid parameters used for @ref vthash_compute_cache_nodes()
  */
-ethash_light_t ethash_light_new_internal(uint64_t cache_size, ethash_h256_t const* seed);
+vthash_light_t vthash_light_new_internal(uint64_t cache_size, vthash_h256_t const* seed);
 
 /**
  * Calculate the light client data. Internal version.
@@ -62,21 +62,21 @@ ethash_light_t ethash_light_new_internal(uint64_t cache_size, ethash_h256_t cons
  * @param nonce          The nonce to pack into the mix
  * @return               The resulting hash.
  */
-ethash_return_value_t ethash_light_compute_internal(
-	ethash_light_t light,
+vthash_return_value_t vthash_light_compute_internal(
+	vthash_light_t light,
 	uint64_t full_size,
-	ethash_h256_t const header_hash,
+	vthash_h256_t const header_hash,
 	uint64_t nonce
 );
 
 void vthash_calculate_dag_item(
 	node* const ret,
 	uint32_t node_index,
-	ethash_light_t const cache
+	vthash_light_t const cache
 );
 
-uint64_t ethash_get_datasize(uint64_t const block_number);
-uint64_t ethash_get_cachesize(uint64_t const block_number);
+uint64_t vthash_get_datasize(uint64_t const block_number);
+uint64_t vthash_get_cachesize(uint64_t const block_number);
 
 #ifdef __cplusplus
 }

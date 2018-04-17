@@ -468,7 +468,7 @@ bool CLMiner::configureGPU(
 	s_workgroupSize = _localWorkSize;
 	s_initialGlobalWorkSize = _globalWorkSizeMultiplier * _localWorkSize;
 
-	uint64_t dagSize = ethash_get_datasize(_currentBlock);
+	uint64_t dagSize = vthash_get_datasize(_currentBlock);
 
 	vector<cl::Platform> platforms = getPlatforms();
 	if (platforms.empty())
@@ -595,7 +595,7 @@ bool CLMiner::init(int epoch)
 		if (m_globalWorkSize % m_workgroupSize != 0)
 			m_globalWorkSize = ((m_globalWorkSize / m_workgroupSize) + 1) * m_workgroupSize;
 
-		uint64_t dagSize = ethash_get_datasize(light->light->block_number);
+		uint64_t dagSize = vthash_get_datasize(light->light->block_number);
 		uint32_t dagSize128 = (unsigned)(dagSize / ETHASH_MIX_BYTES);
 		uint32_t lightSize64 = (unsigned)(light->data().size() / sizeof(node));
 
