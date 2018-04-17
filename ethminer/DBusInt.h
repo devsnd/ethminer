@@ -15,7 +15,7 @@ public:
 			{
 				cerr << "DBus error " << err.name << ": " << err.message << endl;
 			}
-			dbus_bus_request_name(conn, "eth.miner", DBUS_NAME_FLAG_REPLACE_EXISTING, &err);
+			dbus_bus_request_name(conn, "eth.viner", DBUS_NAME_FLAG_REPLACE_EXISTING, &err);
 			if (dbus_error_is_set(&err))
 			{
 				cerr << "DBus error " << err.name << ": " << err.message << endl;
@@ -27,7 +27,7 @@ public:
 		void send(const char *hash)
 		{
 			DBusMessage *msg;
-			msg = dbus_message_new_signal("/eth/miner/hash", "eth.miner.monitor", "Hash");
+			msg = dbus_message_new_signal("/eth/viner/hash", "eth.viner.monitor", "Hash");
 			if (msg == nullptr)
 			{
 				cerr << "Message is null!" << endl;

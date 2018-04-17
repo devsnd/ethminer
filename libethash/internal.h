@@ -69,7 +69,7 @@ ethash_return_value_t ethash_light_compute_internal(
 	uint64_t nonce
 );
 
-void ethash_calculate_dag_item(
+void vthash_calculate_dag_item(
 	node* const ret,
 	uint32_t node_index,
 	ethash_light_t const cache

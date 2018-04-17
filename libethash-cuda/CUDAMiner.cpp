@@ -52,7 +52,7 @@ CUDAMiner::CUDAMiner(FarmFace& _farm, unsigned _index) :
 CUDAMiner::~CUDAMiner()
 {
 	stopWorking();
-	kick_miner();
+	kick_viner();
 }
 
 bool CUDAMiner::init(int epoch)
@@ -63,7 +63,7 @@ bool CUDAMiner::init(int epoch)
 				this_thread::sleep_for(chrono::milliseconds(100));
 		unsigned device = s_devices[index] > -1 ? s_devices[index] : index;
 
-		cnote << "Initialising miner " << index;
+		cnote << "Initialising viner " << index;
 
 		EthashAux::LightType light;
 		light = EthashAux::light(epoch);
@@ -123,13 +123,13 @@ void CUDAMiner::workLoop()
 			uint64_t startN = current.startNonce;
 			if (current.exSizeBits >= 0)
 			{
-				// this can support up to 2^c_log2Max_miners devices
+				// this can support up to 2^c_log2Max_viners devices
 				startN = current.startNonce | ((uint64_t)index << (64 - LOG2_MAX_MINERS - current.exSizeBits));
 			}
 			search(current.header.data(), upper64OfBoundary, (current.exSizeBits >= 0), startN, w);
 		}
 
-		// Reset miner and stop working
+		// Reset viner and stop working
 		CUDA_SAFE_CALL(cudaDeviceReset());
 	}
 	catch (cuda_runtime_error const& _e)
@@ -146,7 +146,7 @@ void CUDAMiner::workLoop()
 	}
 }
 
-void CUDAMiner::kick_miner()
+void CUDAMiner::kick_viner()
 {
 	m_new_work.store(true, std::memory_order_relaxed);
 }
@@ -378,7 +378,7 @@ bool CUDAMiner::cuda_init(
 		if(dagSize128 != m_dag_size || !dag) // create buffer for dag
 			CUDA_SAFE_CALL(cudaMalloc(reinterpret_cast<void**>(&dag), dagSize));
 			
-		set_constants(dag, dagSize128, light, lightSize64); //in ethash_cuda_miner_kernel.cu
+		set_constants(dag, dagSize128, light, lightSize64); //in ethash_cuda_viner_kernel.cu
 		
 		if(dagSize128 != m_dag_size || !dag)
 		{
@@ -400,7 +400,7 @@ bool CUDAMiner::cuda_init(
 				if((m_device_num == dagCreateDevice) || !_cpyToHost){ //if !cpyToHost -> All devices shall generate their DAG
 					cudalog << "Generating DAG for GPU #" << m_device_num << " with dagSize: " 
 							<< dagSize <<" gridSize: " << s_gridSize;
-					ethash_generate_dag(dagSize, s_gridSize, s_blockSize, m_streams[0], m_device_num);
+					vthash_generate_dag(dagSize, s_gridSize, s_blockSize, m_streams[0], m_device_num);
 
 					if (_cpyToHost)
 					{
@@ -512,7 +512,7 @@ void CUDAMiner::search(
 				}
 			}
 		}
-		run_ethash_search(s_gridSize, s_blockSize, stream, buffer, m_current_nonce, m_parallelHash);
+		run_vthash_search(s_gridSize, s_blockSize, stream, buffer, m_current_nonce, m_parallelHash);
 		if (m_current_index >= s_numStreams)
 		{
             if (found_count)

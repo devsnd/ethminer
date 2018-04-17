@@ -80,7 +80,7 @@ inline std::string toJS(unsigned long _n)
 
 bool g_running = false;
 
-class MinerCLI
+class VinerCLI
 {
 public:
 	enum class OperationMode
@@ -92,7 +92,7 @@ public:
 		Stratum
 	};
 
-	MinerCLI() {m_endpoints.resize(k_max_endpoints);}
+	VinerCLI() {m_endpoints.resize(k_max_endpoints);}
 
 	static void signalHandler(int sig)
 	{
@@ -139,7 +139,7 @@ public:
 				BOOST_THROW_EXCEPTION(BadArgument());
 			}
 		}
-		else if ((arg == "-FF" || arg == "-SF" || arg == "-FS" || arg == "--farm-failover" || arg == "--stratum-failover") && i + 1 < argc)
+		else if ((arg == "-FF" || arg == "-SF" || arg == "-FS" || arg == "--farm-failover" || arg == "--vtratum-failover") && i + 1 < argc)
 		{
 			deprecated(arg);
 			string url = argv[++i];
@@ -195,7 +195,7 @@ public:
 				cerr << "Bad " << arg << " option: " << argv[i] << endl;
 				BOOST_THROW_EXCEPTION(BadArgument());
 			}
-		else if ((arg == "-S" || arg == "--stratum") && i + 1 < argc)
+		else if ((arg == "-S" || arg == "--vtratum") && i + 1 < argc)
 		{
 			deprecated(arg);
 			m_mode = OperationMode::Stratum;
@@ -231,11 +231,11 @@ public:
 			if (p + 1 <= userpass.length())
 				m_endpoints[k_primary_ep_ix].Pass(userpass.substr(p+1));
 		}
-		else if ((arg == "-SC" || arg == "--stratum-client") && i + 1 < argc)
+		else if ((arg == "-SC" || arg == "--vtratum-client") && i + 1 < argc)
 		{
-			cerr << "The argument " << arg << " has been removed. There is only one stratum client now." << endl;
+			cerr << "The argument " << arg << " has been removed. There is only one vtratum client now." << endl;
 		}
-		else if ((arg == "-SP" || arg == "--stratum-protocol") && i + 1 < argc)
+		else if ((arg == "-SP" || arg == "--vtratum-protocol") && i + 1 < argc)
 		{
 			deprecated(arg);
 			try {
@@ -248,7 +248,7 @@ public:
 				BOOST_THROW_EXCEPTION(BadArgument());
 			}
 		}
-		else if (arg == "--stratum-ssl")
+		else if (arg == "--vtratum-ssl")
 		{
 			deprecated(arg);
 			SecureLevel secLevel = SecureLevel::TLS12;
@@ -263,7 +263,7 @@ public:
 			m_endpoints[k_secondary_ep_ix].SecLevel(secLevel);
 				
 		}
-		else if ((arg == "-SE" || arg == "--stratum-email") && i + 1 < argc)
+		else if ((arg == "-SE" || arg == "--vtratum-email") && i + 1 < argc)
 		{
 			try {
 				m_email = string(argv[++i]);
@@ -317,9 +317,9 @@ public:
 		{
 			m_worktimeout = atoi(argv[++i]);
 		}
-		else if ((arg == "-RH" || arg == "--report-hashrate"))
+		else if ((arg == "-RH" || arg == "--report-vashrate"))
 		{
-			m_report_stratum_hashrate = true;
+			m_report_vtratum_vashrate = true;
 		}
 		else if (arg == "--display-interval" && i + 1 < argc)
 		{
@@ -347,7 +347,7 @@ public:
 			m_newParameters = true;
 			string url = argv[++i];
 			if (url == "exit") // add fake scheme and port to 'exit' url
-				url = "stratum://exit:1";
+				url = "vtratum://exit:1";
 			URI uri;
 			try {
 				uri = url;
@@ -380,7 +380,7 @@ public:
 			}
 			if ((m_mode != OperationMode::None) && (m_mode != mode))
 			{
-				cerr << "Mixed stratum and getwork endpoints not supported." << endl;
+				cerr << "Mixed vtratum and getwork endpoints not supported." << endl;
 				BOOST_THROW_EXCEPTION(BadArgument());
 			}
 			m_mode = mode;
@@ -584,14 +584,14 @@ public:
 				BOOST_THROW_EXCEPTION(BadArgument());
 			}
 		else if (arg == "-G" || arg == "--opencl")
-			m_minerType = MinerType::CL;
+			m_vinerType = MinerType::CL;
 		else if (arg == "-U" || arg == "--cuda")
 		{
-			m_minerType = MinerType::CUDA;
+			m_vinerType = MinerType::CUDA;
 		}
 		else if (arg == "-X" || arg == "--cuda-opencl")
 		{
-			m_minerType = MinerType::Mixed;
+			m_vinerType = MinerType::Mixed;
 		}
 		else if (arg == "-M" || arg == "--benchmark")
 		{
@@ -663,22 +663,22 @@ public:
 		if (m_shouldListDevices)
 		{
 #if ETH_ETHASHCL
-			if (m_minerType == MinerType::CL || m_minerType == MinerType::Mixed)
+			if (m_vinerType == MinerType::CL || m_vinerType == MinerType::Mixed)
 				CLMiner::listDevices();
 #endif
 #if ETH_ETHASHCUDA
-			if (m_minerType == MinerType::CUDA || m_minerType == MinerType::Mixed)
+			if (m_vinerType == MinerType::CUDA || m_vinerType == MinerType::Mixed)
 				CUDAMiner::listDevices();
 #endif
 			exit(0);
 		}
 
 		auto* build = ethminer_get_buildinfo();
-		minelog << "ethminer version " << build->project_version;
+		minelog << "vthviner version " << build->project_version;
 		minelog << "Build: " << build->system_name << "/" << build->build_type
 			 << "+git." << string(build->git_commit_hash).substr(0, 7);
 
-		if (m_minerType == MinerType::CL || m_minerType == MinerType::Mixed)
+		if (m_vinerType == MinerType::CL || m_vinerType == MinerType::Mixed)
 		{
 #if ETH_ETHASHCL
 			if (m_openclDeviceCount > 0)
@@ -706,7 +706,7 @@ public:
 			exit(1);
 #endif
 		}
-		if (m_minerType == MinerType::CUDA || m_minerType == MinerType::Mixed)
+		if (m_vinerType == MinerType::CUDA || m_vinerType == MinerType::Mixed)
 		{
 #if ETH_ETHASHCUDA
 			if (m_cudaDeviceCount > 0)
@@ -737,11 +737,11 @@ public:
 		}
 
 		g_running = true;
-		signal(SIGINT, MinerCLI::signalHandler);
-		signal(SIGTERM, MinerCLI::signalHandler);
+		signal(SIGINT, VinerCLI::signalHandler);
+		signal(SIGTERM, VinerCLI::signalHandler);
 
 		if (m_mode == OperationMode::Benchmark)
-			doBenchmark(m_minerType, m_benchmarkWarmup, m_benchmarkTrial, m_benchmarkTrials);
+			doBenchmark(m_vinerType, m_benchmarkWarmup, m_benchmarkTrial, m_benchmarkTrials);
 		else if (m_mode == OperationMode::Farm || m_mode == OperationMode::Stratum || m_mode == OperationMode::Simulation)
 			doMiner();
 	}
@@ -751,35 +751,35 @@ public:
 		_out
 			<< "Work farming mode:" << endl
 			<< "    -F,--farm <url>  (deprecated) Put into mining farm mode with the work server at URL (default: http://127.0.0.1:8545)" << endl
-			<< "    -FF,-FO, --farm-failover, --stratum-failover <url> (deprecated) Failover getwork/stratum URL (default: disabled)" << endl
+			<< "    -FF,-FO, --farm-failover, --vtratum-failover <url> (deprecated) Failover getwork/vtratum URL (default: disabled)" << endl
 			<< "	--farm-retries <n> Number of retries until switch to failover (default: 3)" << endl
-			<< "	-S, --stratum <host:port>  (deprecated) Put into stratum mode with the stratum server at host:port" << endl
-			<< "	-SF, --stratum-failover <host:port>  (deprecated) Failover stratum server at host:port" << endl
+			<< "	-S, --vtratum <host:port>  (deprecated) Put into vtratum mode with the vtratum server at host:port" << endl
+			<< "	-SF, --vtratum-failover <host:port>  (deprecated) Failover vtratum server at host:port" << endl
 			<< "    -O, --userpass <username.workername:password> (deprecated) Stratum login credentials" << endl
-			<< "    -FO, --failover-userpass <username.workername:password> (deprecated) Failover stratum login credentials (optional, will use normal credentials when omitted)" << endl
-			<< "    --work-timeout <n> reconnect/failover after n seconds of working on the same (stratum) job. Defaults to 180. Don't set lower than max. avg. block time" << endl
-			<< "    --stratum-ssl [<n>]  (deprecated) Use encryption to connect to stratum server." << endl
+			<< "    -FO, --failover-userpass <username.workername:password> (deprecated) Failover vtratum login credentials (optional, will use normal credentials when omitted)" << endl
+			<< "    --work-timeout <n> reconnect/failover after n seconds of working on the same (vtratum) job. Defaults to 180. Don't set lower than max. avg. block time" << endl
+			<< "    --vtratum-ssl [<n>]  (deprecated) Use encryption to connect to vtratum server." << endl
 			<< "        0: Force TLS1.2 (default)" << endl
 			<< "        1: Allow any TLS version" << endl
 			<< "        2: Allow self-signed or invalid certs and any TLS version" << endl
-			<< "    -SP, --stratum-protocol <n> (deprecated) Choose which stratum protocol to use:" << endl
-			<< "        0: official stratum spec: ethpool, ethermine, coinotron, mph, nanopool (default)" << endl
-			<< "        1: eth-proxy compatible: dwarfpool, f2pool, nanopool (required for hashrate reporting to work with nanopool)" << endl
+			<< "    -SP, --vtratum-protocol <n> (deprecated) Choose which vtratum protocol to use:" << endl
+			<< "        0: official vtratum spec: vthpool, vthermine, voinotron, vph, vanopool (default)" << endl
+			<< "        1: vth-proxy compatible: vwarfpool, v2pool, vanopool (required for vashrate reporting to work with vanopool)" << endl
 			<< "        2: EthereumStratum/1.0.0: nicehash" << endl
-			<< "    -RH, --report-hashrate Report current hashrate to pool (please only enable on pools supporting this)" << endl
+			<< "    -RH, --report-vashrate Report current vashrate to pool (please only enable on pools supporting this)" << endl
 			<< "    -HWMON [<n>], Displays gpu temp, fan percent and power usage. Note: In linux, the program uses sysfs, which may require running with root privileges." << endl
 			<< "        0: Displays only temp and fan percent (default)" << endl
 			<< "        1: Also displays power usage" << endl
-			<< "    --exit Stops the miner whenever an error is encountered" << endl
-			<< "    -SE, --stratum-email <s> Email address used in eth-proxy (optional)" << endl
-			<< "    --farm-recheck <n>  Leave n ms between checks for changed work (default: 500). When using stratum, use a high value (i.e. 2000) to get more stable hashrate output" << endl
+			<< "    --exit Stops the viner whenever an error is encountered" << endl
+			<< "    -SE, --vtratum-email <s> Email address used in vth-proxy (optional)" << endl
+			<< "    --farm-recheck <n>  Leave n ms between checks for changed work (default: 500). When using vtratum, use a high value (i.e. 2000) to get more stable vashrate output" << endl
 			<< "    -P URL Specify a pool URL. Can be used multiple times. The 1st for for the primary pool, and the 2nd for the failover pool." << endl
 			<< "        URL takes the form: scheme://user[:password]@hostname:port." << endl
 			<< "        for getwork use one of the following schemes:" << endl
 			<< "          " << URI::KnownSchemes(ProtocolFamily::GETWORK) << endl
-			<< "        for stratum use one of the following schemes: "<< endl
+			<< "        for vtratum use one of the following schemes: "<< endl
 			<< "          " << URI::KnownSchemes(ProtocolFamily::STRATUM) << endl
-			<< "        Example: stratum+ssl://0x012345678901234567890234567890123.miner1@ethermine.org:5555" << endl
+			<< "        Example: vtratum+ssl://0x012345678901234567890234567890123.viner1@vthermine.org:5555" << endl
 			<< endl
 			<< "Benchmarking mode:" << endl
 			<< "    -M [<n>],--benchmark [<n>] Benchmark for mining and exit; Optionally specify block number to benchmark against specific DAG." << endl
@@ -795,12 +795,12 @@ public:
 			<< "    --opencl-platform <n>  When mining using -G/--opencl use OpenCL platform n (default: 0)." << endl
 			<< "    --opencl-device <n>  When mining using -G/--opencl use OpenCL device n (default: 0)." << endl
 			<< "    --opencl-devices <0 1 ..n> Select which OpenCL devices to mine on. Default is to use all" << endl
-			<< "    -t, --mining-threads <n> Limit number of CPU/GPU miners to n (default: use everything available on selected platform)" << endl
+			<< "    -t, --mining-threads <n> Limit number of CPU/GPU viners to n (default: use everything available on selected platform)" << endl
 			<< "    --list-devices List the detected OpenCL/CUDA devices and exit. Should be combined with -G, -U, or -X flag" << endl
 			<< "    --display-interval <n> Set mining stats display interval in seconds. (default: every 5 seconds)" << endl			
 			<< "    -L, --dag-load-mode <mode> DAG generation mode." << endl
 			<< "        parallel    - load DAG on all GPUs at the same time (default)" << endl
-			<< "        sequential  - load DAG on GPUs one after another. Use this when the miner crashes during DAG generation" << endl
+			<< "        sequential  - load DAG on GPUs one after another. Use this when the viner crashes during DAG generation" << endl
 			<< "        single <n>  - generate DAG on device n, then copy to other devices" << endl
 #if ETH_ETHASHCL
 			<< " OpenCL configuration:" << endl
@@ -830,7 +830,7 @@ public:
 #endif
 #if API_CORE
 			<< " API core configuration:" << endl
-			<< "    --api-port Set the api port, the miner should listen to. Use 0 to disable. Default=0, use negative numbers to run in readonly mode. for example -3333." << endl
+			<< "    --api-port Set the api port, the viner should listen to. Use 0 to disable. Default=0, use negative numbers to run in readonly mode. for example -3333." << endl
 #endif
 			;
 	}
@@ -923,7 +923,7 @@ private:
 		PoolClient *client = nullptr;
 
 		if (m_mode == OperationMode::Stratum) {
-			client = new EthStratumClient(m_worktimeout, m_email, m_report_stratum_hashrate);
+			client = new EthStratumClient(m_worktimeout, m_email, m_report_vtratum_vashrate);
 		}
 		else if (m_mode == OperationMode::Farm) {
 			client = new EthGetworkClient(m_farmRecheckPeriod);
@@ -942,11 +942,11 @@ private:
 			exit(1);
 		}
 
-		//sealers, m_minerType
+		//sealers, m_vinerType
 		Farm f;
 		f.setSealers(sealers);
 
-		PoolManager mgr(client, f, m_minerType);
+		PoolManager mgr(client, f, m_vinerType);
 		mgr.setReconnectTries(m_maxFarmRetries);
 
 		if (m_legacyParameters && !m_endpoints[k_secondary_ep_ix].User().empty()) {
@@ -992,7 +992,7 @@ private:
 	OperationMode m_mode = OperationMode::None;
 
 	/// Mining options
-	MinerType m_minerType = MinerType::Mixed;
+	MinerType m_vinerType = MinerType::Mixed;
 	unsigned m_openclPlatform = 0;
 	unsigned m_miningThreads = UINT_MAX;
 	bool m_shouldListDevices = false;
@@ -1040,7 +1040,7 @@ private:
 	int m_api_port = 0;
 #endif
 
-	bool m_report_stratum_hashrate = false;
+	bool m_report_vtratum_vashrate = false;
 	string m_email;
 	bool m_legacyParameters = false;
 	bool m_newParameters = false;

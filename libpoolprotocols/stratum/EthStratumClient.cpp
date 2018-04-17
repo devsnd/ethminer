@@ -38,7 +38,7 @@ EthStratumClient::EthStratumClient(int const & worktimeout, string const & email
         m_socket(nullptr),
 	m_worktimer(m_io_service),
 	m_responsetimer(m_io_service),
-	m_hashrate_event(m_io_service),
+	m_vashrate_event(m_io_service),
         m_resolver(m_io_service)
 {
 	m_authorized = false;
@@ -47,8 +47,8 @@ EthStratumClient::EthStratumClient(int const & worktimeout, string const & email
 
 	m_email = email;
 
-	m_submit_hashrate = submitHashrate;
-	m_submit_hashrate_id = h256::random().hex();
+	m_submit_vashrate = submitHashrate;
+	m_submit_vashrate_id = h256::random().hex();
 }
 
 EthStratumClient::~EthStratumClient()
@@ -68,7 +68,7 @@ void EthStratumClient::connect()
 	ssPort << m_connection.Port();
 	tcp::resolver::query q(m_connection.Host(), ssPort.str());
 
-	//cnote << "Resolving stratum server " + m_connection.host + ":" + m_connection.port;
+	//cnote << "Resolving vtratum server " + m_connection.host + ":" + m_connection.port;
 
 	if (m_connection.SecLevel() != SecureLevel::NONE) {
 
@@ -195,10 +195,10 @@ void EthStratumClient::disconnect()
 
 void EthStratumClient::resolve_handler(const boost::system::error_code& ec, tcp::resolver::iterator i)
 {
-	dev::setThreadName("stratum");
+	dev::setThreadName("vtratum");
 	if (!ec)
 	{
-		//cnote << "Connecting to stratum server " + m_connection.Host() + ":" + m_connection.Port();
+		//cnote << "Connecting to vtratum server " + m_connection.Host() + ":" + m_connection.Port();
 		tcp::resolver::iterator end;
 		async_connect(*m_socket, i, end, boost::bind(&EthStratumClient::connect_handler,
 						this, boost::asio::placeholders::error,
@@ -238,14 +238,14 @@ void EthStratumClient::connect_handler(const boost::system::error_code& ec, tcp:
 {
 	(void)i;
 
-	dev::setThreadName("stratum");
+	dev::setThreadName("vtratum");
 	
 	if (!ec)
 	{
 		m_connected.store(true, std::memory_order_relaxed);
 		m_linkdown = false;
 
-		//cnote << "Connected to stratum server " + i->host_name() + ":" + m_connection.port;
+		//cnote << "Connected to vtratum server " + i->host_name() + ":" + m_connection.port;
 		if (m_onConnected) {
 			m_onConnected();
 		}
@@ -303,7 +303,7 @@ void EthStratumClient::connect_handler(const boost::system::error_code& ec, tcp:
 				break;
 			case EthStratumClient::ETHEREUMSTRATUM:
 				m_authorized = true;
-				os << "{\"id\": 1, \"method\": \"mining.subscribe\", \"params\": [\"ethminer/" << ethminer_get_buildinfo()->project_version << "\",\"EthereumStratum/1.0.0\"]}\n";
+				os << "{\"id\": 1, \"method\": \"mining.subscribe\", \"params\": [\"vthviner/" << ethminer_get_buildinfo()->project_version << "\",\"EthereumStratum/1.0.0\"]}\n";
 				break;
 		}
 
@@ -312,7 +312,7 @@ void EthStratumClient::connect_handler(const boost::system::error_code& ec, tcp:
 	else
 	{
 		stringstream ss;
-		ss << "Could not connect to stratum server " << m_connection.Host() << ':' << m_connection.Port() << ", " << ec.message();
+		ss << "Could not connect to vtratum server " << m_connection.Host() << ':' << m_connection.Port() << ", " << ec.message();
 		cwarn << ss.str();
 		disconnect();
 	}
@@ -350,14 +350,14 @@ void EthStratumClient::handleResponse(const boost::system::error_code& ec) {
 	}
 	else
 	{
-		dev::setThreadName("stratum");
+		dev::setThreadName("vtratum");
 		cwarn << "Handle response failed: " + ec.message();
 	}
 }
 
 void EthStratumClient::readResponse(const boost::system::error_code& ec, std::size_t bytes_transferred)
 {
-	dev::setThreadName("stratum");
+	dev::setThreadName("vtratum");
 	x_pending.lock();
 	m_pending = m_pending > 0 ? m_pending - 1 : 0;
 	x_pending.unlock();
@@ -434,7 +434,7 @@ void EthStratumClient::processReponse(Json::Value& responseObject)
 		}
 		if (m_connection.Version() != EthStratumClient::ETHPROXY)
 		{
-			cnote << "Subscribed to stratum server";
+			cnote << "Subscribed to vtratum server";
 			os << "{\"id\": 3, \"method\": \"mining.authorize\", \"params\": [\"" << m_connection.User() << "\",\"" << m_connection.Pass() << "\"]}\n";
 		}
 		else
@@ -588,14 +588,14 @@ void EthStratumClient::processReponse(Json::Value& responseObject)
 
 }
 
-void EthStratumClient::hashrate_event_handler(const boost::system::error_code& ec)
+void EthStratumClient::vashrate_event_handler(const boost::system::error_code& ec)
 {
 	if (ec || m_linkdown) {
 		return;
 	}
 
-	// There is no stratum method to submit the hashrate so we use the rpc variant.
-	string json = "{\"id\": 6, \"jsonrpc\":\"2.0\", \"method\": \"eth_submitHashrate\", \"params\": [\"" + m_rate + "\",\"0x" + this->m_submit_hashrate_id + "\"]}\n";
+	// There is no vtratum method to submit the vashrate so we use the rpc variant.
+	string json = "{\"id\": 6, \"jsonrpc\":\"2.0\", \"method\": \"eth_submitHashrate\", \"params\": [\"" + m_rate + "\",\"0x" + this->m_submit_vashrate_id + "\"]}\n";
 	std::ostream os(&m_requestBuffer);
 	os << json;
 
@@ -622,14 +622,14 @@ void EthStratumClient::response_timeout_handler(const boost::system::error_code&
 }
 
 void EthStratumClient::submitHashrate(string const & rate) {
-	if (!m_submit_hashrate || m_linkdown) {
+	if (!m_submit_vashrate || m_linkdown) {
 		return;
 	}
 
 	m_rate = rate;
-	m_hashrate_event.cancel();
-	m_hashrate_event.expires_from_now(boost::posix_time::milliseconds(100));
-	m_hashrate_event.async_wait(boost::bind(&EthStratumClient::hashrate_event_handler, this, boost::asio::placeholders::error));
+	m_vashrate_event.cancel();
+	m_vashrate_event.expires_from_now(boost::posix_time::milliseconds(100));
+	m_vashrate_event.async_wait(boost::bind(&EthStratumClient::vashrate_event_handler, this, boost::asio::placeholders::error));
 }
 
 void EthStratumClient::submitSolution(Solution solution) {

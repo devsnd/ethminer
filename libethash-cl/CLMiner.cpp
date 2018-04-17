@@ -1,4 +1,4 @@
-/// OpenCL miner implementation.
+/// OpenCL viner implementation.
 ///
 /// @file
 /// @copyright GNU General Public License
@@ -270,7 +270,7 @@ CLMiner::CLMiner(FarmFace& _farm, unsigned _index):
 CLMiner::~CLMiner()
 {
 	stopWorking();
-	kick_miner();
+	kick_viner();
 }
 
 void CLMiner::workLoop()
@@ -391,7 +391,7 @@ void CLMiner::workLoop()
 	}
 }
 
-void CLMiner::kick_miner() {}
+void CLMiner::kick_viner() {}
 
 unsigned CLMiner::getNumDevices()
 {
@@ -629,7 +629,7 @@ bool CLMiner::init(int epoch)
 		addDefinition(code, "COMPUTE", computeCapability);
 		addDefinition(code, "THREADS_PER_HASH", s_threadsPerHash);
 
-		// create miner OpenCL program
+		// create viner OpenCL program
 		cl::Program::Sources sources{{code.data(), code.size()}};
 		cl::Program program(m_context, sources);
 		try
@@ -663,8 +663,8 @@ bool CLMiner::init(int epoch)
 			cllog << "Creating DAG buffer, size" << dagSize;
 			m_dag = cl::Buffer(m_context, CL_MEM_READ_ONLY, dagSize);
 			cllog << "Loading kernels";
-			m_searchKernel = cl::Kernel(program, "ethash_search");
-			m_dagKernel = cl::Kernel(program, "ethash_calculate_dag_item");
+			m_searchKernel = cl::Kernel(program, "vthash_search");
+			m_dagKernel = cl::Kernel(program, "vthash_calculate_dag_item");
 			cllog << "Writing light cache buffer";
 			m_queue.enqueueWriteBuffer(m_light, CL_TRUE, 0, light->data().size(), light->data().data());
 		}

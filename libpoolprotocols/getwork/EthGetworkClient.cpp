@@ -128,7 +128,7 @@ void EthGetworkClient::workLoop()
 				disconnect();
 			}
 
-			// Submit current hashrate if needed
+			// Submit current vashrate if needed
 			if (!m_currentHashrateToSubmit.empty()) {
 				try
 				{
@@ -136,7 +136,7 @@ void EthGetworkClient::workLoop()
 				}
 				catch (jsonrpc::JsonRpcException)
 				{
-					//cwarn << "Failed to submit hashrate.";
+					//cwarn << "Failed to submit vashrate.";
 					//cwarn << boost::diagnostic_information(_e);
 				}
 				m_currentHashrateToSubmit = "";

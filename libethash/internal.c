@@ -79,7 +79,7 @@ bool static ethash_compute_cache_nodes(
 	return true;
 }
 
-void ethash_calculate_dag_item(
+void vthash_calculate_dag_item(
 	node* const ret,
 	uint32_t node_index,
 	ethash_light_t const light
@@ -99,7 +99,7 @@ void ethash_calculate_dag_item(
 	__m128i xmm3 = ret->xmm[3];
 #endif
 
-	for (uint32_t i = 0; i != ETHASH_DATASET_PARENTS; ++i) {
+	for (uint32_t i = 0; i != VTHASH_DATASET_PARENTS; ++i) {
 		uint32_t parent_index = fnv_hash(node_index ^ i, ret->words[i % NODE_WORDS]) % num_parent_nodes;
 		node const *parent = &cache_nodes[parent_index];
 
@@ -171,7 +171,7 @@ static bool ethash_hash(
 				dag_node = &full_nodes[MIX_NODES * index + n];
 			} else {
 				node tmp_node;
-				ethash_calculate_dag_item(&tmp_node, index * MIX_NODES + n, light);
+				vthash_calculate_dag_item(&tmp_node, index * MIX_NODES + n, light);
 				dag_node = &tmp_node;
 			}
 

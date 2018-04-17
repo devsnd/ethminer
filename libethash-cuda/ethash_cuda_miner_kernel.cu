@@ -1,11 +1,11 @@
 /*
 * Genoil's CUDA mining kernel for Ethereum
 * based on Tim Hughes' opencl kernel.
-* thanks to sp_, trpuvot, djm34, cbuchner for things i took from ccminer.
+* thanks to sp_, trpuvot, djm34, cbuchner for things i took from ccviner.
 */
 
-#include "ethash_cuda_miner_kernel.h"
-#include "ethash_cuda_miner_kernel_globals.h"
+#include "ethash_cuda_viner_kernel.h"
+#include "ethash_cuda_viner_kernel_globals.h"
 #include "cuda_helper.h"
 
 #include "fnv.cuh"
@@ -17,7 +17,7 @@
 
 template <uint32_t _PARALLEL_HASH>
 __global__ void 
-ethash_search(
+vthash_search(
 	volatile search_results* g_output,
 	uint64_t start_nonce
 	)
@@ -40,7 +40,7 @@ ethash_search(
 	g_output->result[index].mix[7] = mix[3].y;
 }
 
-void run_ethash_search(
+void run_vthash_search(
 	uint32_t blocks,
 	uint32_t threads,
 	cudaStream_t stream,
@@ -51,21 +51,21 @@ void run_ethash_search(
 {
 	switch (parallelHash)
 	{
-		case 1: ethash_search <1> <<<blocks, threads, 0, stream >>>(g_output, start_nonce); break;
-		case 2: ethash_search <2> <<<blocks, threads, 0, stream >>>(g_output, start_nonce); break;
-		case 4: ethash_search <4> <<<blocks, threads, 0, stream >>>(g_output, start_nonce); break;
-		case 8: ethash_search <8> <<<blocks, threads, 0, stream >>>(g_output, start_nonce); break;
-		default: ethash_search <4> <<<blocks, threads, 0, stream >>>(g_output, start_nonce); break;
+		case 1: vthash_search <1> <<<blocks, threads, 0, stream >>>(g_output, start_nonce); break;
+		case 2: vthash_search <2> <<<blocks, threads, 0, stream >>>(g_output, start_nonce); break;
+		case 4: vthash_search <4> <<<blocks, threads, 0, stream >>>(g_output, start_nonce); break;
+		case 8: vthash_search <8> <<<blocks, threads, 0, stream >>>(g_output, start_nonce); break;
+		default: vthash_search <4> <<<blocks, threads, 0, stream >>>(g_output, start_nonce); break;
 	}
 	CUDA_SAFE_CALL(cudaGetLastError());
 }
 
-#define ETHASH_DATASET_PARENTS 256
+#define VTHASH_DATASET_PARENTS 256
 #define NODE_WORDS (64/4)
 
 
 __global__ void
-ethash_calculate_dag_item(uint32_t start)
+vthash_calculate_dag_item(uint32_t start)
 {
 	uint32_t const node_index = start + blockIdx.x * blockDim.x + threadIdx.x;
 	if (node_index > d_dag_size * 2) return;
@@ -77,7 +77,7 @@ ethash_calculate_dag_item(uint32_t start)
 
 	const int thread_id = threadIdx.x & 3;
 
-	for (uint32_t i = 0; i != ETHASH_DATASET_PARENTS; ++i) {
+	for (uint32_t i = 0; i != VTHASH_DATASET_PARENTS; ++i) {
 		uint32_t parent_index = fnv(node_index ^ i, dag_node.words[i % NODE_WORDS]) % d_light_size;
 		for (uint32_t t = 0; t < 4; t++) {
 
@@ -106,7 +106,7 @@ ethash_calculate_dag_item(uint32_t start)
 	}
 }
 
-void ethash_generate_dag(
+void vthash_generate_dag(
 	uint64_t dag_size,
 	uint32_t blocks,
 	uint32_t threads,
@@ -121,7 +121,7 @@ void ethash_generate_dag(
 	if (restWork > 0) fullRuns++;
 	for (uint32_t i = 0; i < fullRuns; i++)
 	{
-		ethash_calculate_dag_item <<<blocks, threads, 0, stream >>>(i * blocks * threads);
+		vthash_calculate_dag_item <<<blocks, threads, 0, stream >>>(i * blocks * threads);
 		CUDA_SAFE_CALL(cudaDeviceSynchronize());
 	}
 	CUDA_SAFE_CALL(cudaGetLastError());

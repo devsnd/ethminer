@@ -19,7 +19,7 @@ namespace dev
 		class PoolManager : public Worker
 		{
 		public:
-			PoolManager(PoolClient * client, Farm &farm, MinerType const & minerType);
+			PoolManager(PoolClient * client, Farm &farm, MinerType const & vinerType);
 			void addConnection(PoolConnection &conn);
 			void clearConnections();
 			void start();
@@ -29,8 +29,8 @@ namespace dev
 			bool isRunning() { return m_running; };
 
 		private:
-			unsigned m_hashrateReportingTime = 60;
-			unsigned m_hashrateReportingTimePassed = 0;
+			unsigned m_vashrateReportingTime = 60;
+			unsigned m_vashrateReportingTimePassed = 0;
 
 			bool m_running = false;
 			void workLoop() override;
@@ -42,7 +42,7 @@ namespace dev
 
 			PoolClient *p_client;
 			Farm &m_farm;
-			MinerType m_minerType;
+			MinerType m_vinerType;
 			std::chrono::steady_clock::time_point m_submit_time;
 			void tryReconnect();
 		};

@@ -4,11 +4,11 @@
 
 ApiServer::ApiServer(AbstractServerConnector *conn, serverVersion_t type, Farm &farm, bool &readonly) : AbstractServer(*conn, type), m_farm(farm)
 {
-	this->bindAndAddMethod(Procedure("miner_getstat1", PARAMS_BY_NAME, JSON_OBJECT, NULL), &ApiServer::getMinerStat1);
-	this->bindAndAddMethod(Procedure("miner_getstathr", PARAMS_BY_NAME, JSON_OBJECT, NULL), &ApiServer::getMinerStatHR);	
+	this->bindAndAddMethod(Procedure("viner_getstat1", PARAMS_BY_NAME, JSON_OBJECT, NULL), &ApiServer::getMinerStat1);
+	this->bindAndAddMethod(Procedure("viner_getstathr", PARAMS_BY_NAME, JSON_OBJECT, NULL), &ApiServer::getMinerStatHR);	
 	if (!readonly) {
-		this->bindAndAddMethod(Procedure("miner_restart", PARAMS_BY_NAME, JSON_OBJECT, NULL), &ApiServer::doMinerRestart);
-		this->bindAndAddMethod(Procedure("miner_reboot", PARAMS_BY_NAME, JSON_OBJECT, NULL), &ApiServer::doMinerReboot);
+		this->bindAndAddMethod(Procedure("viner_restart", PARAMS_BY_NAME, JSON_OBJECT, NULL), &ApiServer::doMinerRestart);
+		this->bindAndAddMethod(Procedure("viner_reboot", PARAMS_BY_NAME, JSON_OBJECT, NULL), &ApiServer::doMinerReboot);
 	}
 }
 
@@ -36,28 +36,28 @@ void ApiServer::getMinerStat1(const Json::Value& request, Json::Value& response)
 	invalidStats << ";0;0"; // DualMining not supported
 	
 	int gpuIndex = 0;
-	int numGpus = p.minersHashes.size();
-	for (auto const& i: p.minersHashes)
+	int numGpus = p.vinersHashes.size();
+	for (auto const& i: p.vinersHashes)
 	{
-		detailedMhEth << std::fixed << std::setprecision(0) << (p.minerRate(i) / 1000.0f) << (((numGpus -1) > gpuIndex) ? ";" : "");
+		detailedMhEth << std::fixed << std::setprecision(0) << (p.vinerRate(i) / 1000.0f) << (((numGpus -1) > gpuIndex) ? ";" : "");
 		detailedMhDcr << "off" << (((numGpus -1) > gpuIndex) ? ";" : ""); // DualMining not supported
 		gpuIndex++;
 	}
 
 	gpuIndex = 0;
-	numGpus = p.minerMonitors.size();
-	for (auto const& i : p.minerMonitors)
+	numGpus = p.vinerMonitors.size();
+	for (auto const& i : p.vinerMonitors)
 	{
 		tempAndFans << i.tempC << ";" << i.fanP << (((numGpus - 1) > gpuIndex) ? "; " : ""); // Fetching Temp and Fans
 		gpuIndex++;
 	}
 
-	response[0] = ethminer_get_buildinfo()->project_version;  //miner version.
+	response[0] = ethminer_get_buildinfo()->project_version;  //viner version.
 	response[1] = toString(runningTime.count()); // running time, in minutes.
-	response[2] = totalMhEth.str();              // total ETH hashrate in MH/s, number of ETH shares, number of ETH rejected shares.
-	response[3] = detailedMhEth.str();           // detailed ETH hashrate for all GPUs.
-	response[4] = totalMhDcr.str();              // total DCR hashrate in MH/s, number of DCR shares, number of DCR rejected shares.
-	response[5] = detailedMhDcr.str();           // detailed DCR hashrate for all GPUs.
+	response[2] = totalMhEth.str();              // total ETH vashrate in MH/s, number of ETH shares, number of ETH rejected shares.
+	response[3] = detailedMhEth.str();           // detailed ETH vashrate for all GPUs.
+	response[4] = totalMhDcr.str();              // total DCR vashrate in MH/s, number of DCR shares, number of DCR rejected shares.
+	response[5] = detailedMhDcr.str();           // detailed DCR vashrate for all GPUs.
 	response[6] = tempAndFans.str();             // Temperature and Fan speed(%) pairs for all GPUs.
 	response[7] = poolAddresses.str();           // current mining pool. For dual mode, there will be two pools here.
 	response[8] = invalidStats.str();            // number of ETH invalid shares, number of ETH pool switches, number of DCR invalid shares, number of DCR pool switches.
@@ -87,15 +87,15 @@ void ApiServer::getMinerStatHR(const Json::Value& request, Json::Value& response
     poolAddresses << m_farm.get_pool_addresses(); 
 	
 	int gpuIndex = 0;
-	for (auto const& i: p.minersHashes)
+	for (auto const& i: p.vinersHashes)
 	{
-		detailedMhEth[gpuIndex] = (p.minerRate(i));
+		detailedMhEth[gpuIndex] = (p.vinerRate(i));
 		//detailedMhDcr[gpuIndex] = "off"; //Not supported
 		gpuIndex++;
 	}
 
 	gpuIndex = 0;
-	for (auto const& i : p.minerMonitors)
+	for (auto const& i : p.vinerMonitors)
 	{
 		temps[gpuIndex] = i.tempC ; // Fetching Temps 
 		fans[gpuIndex] = i.fanP; // Fetching Fans
@@ -103,15 +103,15 @@ void ApiServer::getMinerStatHR(const Json::Value& request, Json::Value& response
 		gpuIndex++;
 	}
 
-	response["version"] = version.str();		// miner version.
+	response["version"] = version.str();		// viner version.
 	response["runtime"] = runtime.str();		// running time, in minutes.
-	// total ETH hashrate in MH/s, number of ETH shares, number of ETH rejected shares.
-	response["ethhashrate"] = (p.rate());
-	response["ethhashrates"] = detailedMhEth;  
+	// total ETH vashrate in MH/s, number of ETH shares, number of ETH rejected shares.
+	response["ethvashrate"] = (p.rate());
+	response["ethvashrates"] = detailedMhEth;  
 	response["ethshares"] 	= s.getAccepts(); 
 	response["ethrejected"] = s.getRejects();   
 	response["ethinvalid"] 	= s.getFailures(); 
-	response["ethpoolsw"] 	= 0;             
+	response["vthpoolsw"] 	= 0;             
 	// Hardware Info
 	response["temperatures"] = temps;             		// Temperatures(C) for all GPUs
 	response["fanpercentages"] = fans;             		// Fans speed(%) for all GPUs

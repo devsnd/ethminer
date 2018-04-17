@@ -62,7 +62,7 @@ void set_target(
 	uint64_t _target
 	);
 
-void run_ethash_search(
+void run_vthash_search(
 	uint32_t search_batch_size,
 	uint32_t workgroup_size,
 	cudaStream_t stream,
@@ -71,7 +71,7 @@ void run_ethash_search(
 	uint32_t parallelHash
 	);
 
-void ethash_generate_dag(
+void vthash_generate_dag(
 	uint64_t dag_size,
 	uint32_t blocks,
 	uint32_t threads,

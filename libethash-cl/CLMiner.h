@@ -1,4 +1,4 @@
-/// OpenCL miner implementation.
+/// OpenCL viner implementation.
 ///
 /// @file
 /// @copyright GNU General Public License
@@ -79,7 +79,7 @@ public:
 	}
 	static void setCLKernel(unsigned _clKernel) { s_clKernelName = _clKernel == 1 ? CLKernelName::Experimental : CLKernelName::Stable; }
 protected:
-	void kick_miner() override;
+	void kick_viner() override;
 
 private:
 	void workLoop() override;

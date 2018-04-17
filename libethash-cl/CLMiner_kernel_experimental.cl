@@ -27,7 +27,7 @@
     #define LIGHT_SIZE 262139
 #endif
 
-#define ETHASH_DATASET_PARENTS 256
+#define VTHASH_DATASET_PARENTS 256
 #define NODE_WORDS (64/4)
 
 // Either 8, 4, 2, or 1
@@ -270,7 +270,7 @@ typedef union {
 #if PLATFORM != OPENCL_PLATFORM_NVIDIA // use maxrregs on nv
 __attribute__((reqd_work_group_size(GROUP_SIZE, 1, 1)))
 #endif
-__kernel void ethash_search(
+__kernel void vthash_search(
     __global volatile uint* restrict g_output,
     __constant hash32_t const* g_header,
     __global hash128_t const* g_dag,
@@ -415,7 +415,7 @@ __kernel void ethash_search(
     g_output[slot] = gid;
 }
 
-__kernel void ethash_calculate_dag_item(uint start, __global hash64_t const* g_light, __global hash64_t * g_dag, uint isolate)
+__kernel void vthash_calculate_dag_item(uint start, __global hash64_t const* g_light, __global hash64_t * g_dag, uint isolate)
 {
     uint const node_index = start + get_global_id(0);
     if (node_index > DAG_SIZE * 2) return;
@@ -426,7 +426,7 @@ __kernel void ethash_calculate_dag_item(uint start, __global hash64_t const* g_l
     SHA3_512(dag_node.ulongs);
 
 
-    for (uint i = 0; i != ETHASH_DATASET_PARENTS; ++i) {
+    for (uint i = 0; i != VTHASH_DATASET_PARENTS; ++i) {
         uint parent_index = FNV(node_index ^ i, dag_node.uints[i % NODE_WORDS]) % LIGHT_SIZE;
         dag_node.uint16s[0] = FNV(dag_node.uint16s[0], g_light[parent_index].uint16s[0]);
     }

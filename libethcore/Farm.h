@@ -56,7 +56,7 @@ public:
 		std::function<Miner*(FarmFace&, unsigned)> create;
 	};
 
-	Farm(): m_hashrateTimer(m_io_service)
+	Farm(): m_vashrateTimer(m_io_service)
 	{
 		// Given that all nonces are equally likely to solve the problem
 		// we could reasonably always start the nonce search ranges
@@ -95,65 +95,65 @@ public:
 	 */
 	void setWork(WorkPackage const& _wp)
 	{
-		//Collect hashrate before miner reset their work
+		//Collect vashrate before viner reset their work
 		collectHashRate();
 
-		// Set work to each miner
-		Guard l(x_minerWork);
+		// Set work to each viner
+		Guard l(x_vinerWork);
 		if (_wp.header == m_work.header && _wp.startNonce == m_work.startNonce)
 			return;
 		m_work = _wp;
-		for (auto const& m: m_miners)
+		for (auto const& m: m_viners)
 			m->setWork(m_work);
 	}
 
 	void setSealers(std::map<std::string, SealerDescriptor> const& _sealers) { m_sealers = _sealers; }
 
 	/**
-	 * @brief Start a number of miners.
+	 * @brief Start a number of viners.
 	 */
 	bool start(std::string const& _sealer, bool mixed)
 	{
-		Guard l(x_minerWork);
-		if (!m_miners.empty() && m_lastSealer == _sealer)
+		Guard l(x_vinerWork);
+		if (!m_viners.empty() && m_lastSealer == _sealer)
 			return true;
 		if (!m_sealers.count(_sealer))
 			return false;
 
 		if (!mixed)
 		{
-			m_miners.clear();
+			m_viners.clear();
 		}
 		auto ins = m_sealers[_sealer].instances();
 		unsigned start = 0;
 		if (!mixed)
 		{
-			m_miners.reserve(ins);
+			m_viners.reserve(ins);
 		}
 		else
 		{
 
-			start = m_miners.size();
+			start = m_viners.size();
 			ins += start;
-			m_miners.reserve(ins);
+			m_viners.reserve(ins);
 		}
 		for (unsigned i = start; i < ins; ++i)
 		{
-			// TODO: Improve miners creation, use unique_ptr.
-			m_miners.push_back(std::shared_ptr<Miner>(m_sealers[_sealer].create(*this, i)));
+			// TODO: Improve viners creation, use unique_ptr.
+			m_viners.push_back(std::shared_ptr<Miner>(m_sealers[_sealer].create(*this, i)));
 
-			// Start miners' threads. They should pause waiting for new work
+			// Start viners' threads. They should pause waiting for new work
 			// package.
-			m_miners.back()->startWorking();
+			m_viners.back()->startWorking();
 		}
 		m_isMining = true;
 		m_lastSealer = _sealer;
 		b_lastMixed = mixed;
 
-		// Start hashrate collector
-		m_hashrateTimer.cancel();
-		m_hashrateTimer.expires_from_now(boost::posix_time::milliseconds(1000));
-		m_hashrateTimer.async_wait(boost::bind(&Farm::processHashRate, this, boost::asio::placeholders::error));
+		// Start vashrate collector
+		m_vashrateTimer.cancel();
+		m_vashrateTimer.expires_from_now(boost::posix_time::milliseconds(1000));
+		m_vashrateTimer.async_wait(boost::bind(&Farm::processHashRate, this, boost::asio::placeholders::error));
 
 		if (m_serviceThread.joinable()) {
 			m_io_service.reset();
@@ -171,12 +171,12 @@ public:
 	void stop()
 	{
 		{
-			Guard l(x_minerWork);
-			m_miners.clear();
+			Guard l(x_vinerWork);
+			m_viners.clear();
 			m_isMining = false;
 		}
 
-		m_hashrateTimer.cancel();
+		m_vashrateTimer.cancel();
 		m_io_service.stop();
 
 		m_lastProgresses.clear();
@@ -186,33 +186,33 @@ public:
     {
         auto now = std::chrono::steady_clock::now();
 
-        std::lock_guard<std::mutex> lock(x_minerWork);
+        std::lock_guard<std::mutex> lock(x_vinerWork);
 
         WorkingProgress p;
         p.ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - m_lastStart).count();
         m_lastStart = now;
 
         // Collect
-        for (auto const& i : m_miners)
+        for (auto const& i : m_viners)
         {
-            uint64_t minerHashCount = i->hashCount();
-            p.hashes += minerHashCount;
-            p.minersHashes.push_back(minerHashCount);
+            uint64_t vinerHashCount = i->hashCount();
+            p.hashes += vinerHashCount;
+            p.vinersHashes.push_back(vinerHashCount);
         }
 
         // Reset
-        for (auto const& i : m_miners)
+        for (auto const& i : m_viners)
             i->resetHashCount();
 
         if (p.hashes > 0)
             m_lastProgresses.push_back(p);
 
-        // We smooth the hashrate over the last x seconds
+        // We smooth the vashrate over the last x seconds
         uint64_t allMs = 0;
         for (auto const& cp : m_lastProgresses)
             allMs += cp.ms;
 
-        if (allMs > m_hashrateSmoothInterval)
+        if (allMs > m_vashrateSmoothInterval)
             m_lastProgresses.erase(m_lastProgresses.begin());
     }
 
@@ -222,9 +222,9 @@ public:
 			collectHashRate();
 
 			// Restart timer 	
-			m_hashrateTimer.cancel();
-			m_hashrateTimer.expires_from_now(boost::posix_time::milliseconds(1000));
-			m_hashrateTimer.async_wait(boost::bind(&Farm::processHashRate, this, boost::asio::placeholders::error));
+			m_vashrateTimer.cancel();
+			m_vashrateTimer.expires_from_now(boost::posix_time::milliseconds(1000));
+			m_vashrateTimer.async_wait(boost::bind(&Farm::processHashRate, this, boost::asio::placeholders::error));
 		}
 	}
 	
@@ -249,13 +249,13 @@ public:
      */
     WorkingProgress const& miningProgress(bool hwmon = false, bool power = false) const
     {
-        std::lock_guard<std::mutex> lock(x_minerWork);
+        std::lock_guard<std::mutex> lock(x_vinerWork);
         WorkingProgress p;
         p.ms = 0;
         p.hashes = 0;
-        for (auto const& i : m_miners)
+        for (auto const& i : m_viners)
         {
-            p.minersHashes.push_back(0);
+            p.vinersHashes.push_back(0);
 			if (hwmon) {
 				HwMonitorInfo hwInfo = i->hwmonInfo();
 				HwMonitor hw;
@@ -316,7 +316,7 @@ public:
 				hw.tempC = tempC;
 				hw.fanP = fanpcnt;
 				hw.powerW = powerW/((double)1000.0);
-				p.minerMonitors.push_back(hw);
+				p.vinerMonitors.push_back(hw);
 			}
         }
 
@@ -324,9 +324,9 @@ public:
         {
             p.ms += cp.ms;
             p.hashes += cp.hashes;
-            for (unsigned int i = 0; i < cp.minersHashes.size() && i < p.minersHashes.size(); i++)
+            for (unsigned int i = 0; i < cp.vinersHashes.size() && i < p.vinersHashes.size(); i++)
             {
-                p.minersHashes.at(i) += cp.minersHashes.at(i);
+                p.vinersHashes.at(i) += cp.vinersHashes.at(i);
             }
         }
 
@@ -375,7 +375,7 @@ public:
 	void onSolutionFound(SolutionFound const& _handler) { m_onSolutionFound = _handler; }
 	void onMinerRestart(MinerRestart const& _handler) { m_onMinerRestart = _handler; }
 
-	WorkPackage work() const { Guard l(x_minerWork); return m_work; }
+	WorkPackage work() const { Guard l(x_vinerWork); return m_work; }
 
 	std::chrono::steady_clock::time_point farmLaunched() {
 		return m_farm_launched;
@@ -423,8 +423,8 @@ private:
 		m_onSolutionFound(_s);
 	}
 
-	mutable Mutex x_minerWork;
-	std::vector<std::shared_ptr<Miner>> m_miners;
+	mutable Mutex x_vinerWork;
+	std::vector<std::shared_ptr<Miner>> m_viners;
 	WorkPackage m_work;
 
 	std::atomic<bool> m_isMining = {false};
@@ -439,10 +439,10 @@ private:
 	bool b_lastMixed = false;
 
 	std::chrono::steady_clock::time_point m_lastStart;
-	uint64_t m_hashrateSmoothInterval = 10000;
+	uint64_t m_vashrateSmoothInterval = 10000;
 	std::thread m_serviceThread;  ///< The IO service thread.
 	boost::asio::io_service m_io_service;
-	boost::asio::deadline_timer m_hashrateTimer;
+	boost::asio::deadline_timer m_vashrateTimer;
 	std::vector<WorkingProgress> m_lastProgresses;
 
 	mutable SolutionStats m_solutionStats;

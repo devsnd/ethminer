@@ -23,7 +23,7 @@ along with cpp-ethereum.  If not, see <http://www.gnu.org/licenses/>.
 #include <libdevcore/Worker.h>
 #include <libethcore/EthashAux.h>
 #include <libethcore/Miner.h>
-#include "ethash_cuda_miner_kernel.h"
+#include "ethash_cuda_viner_kernel.h"
 #include "libethash/internal.h"
 
 namespace dev
@@ -97,7 +97,7 @@ public:
 	static unsigned const c_defaultNumStreams;
 
 protected:
-	void kick_miner() override;
+	void kick_viner() override;
 
 private:
 	atomic<bool> m_new_work = {false};

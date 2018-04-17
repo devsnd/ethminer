@@ -99,9 +99,9 @@ struct WorkingProgress
 	uint64_t ms = 0;			///< Total number of milliseconds of mining thus far.
 	uint64_t rate() const { return ms == 0 ? 0 : hashes * 1000 / ms; }
 
-	std::vector<uint64_t> minersHashes;
-	std::vector<HwMonitor> minerMonitors;
-	uint64_t minerRate(const uint64_t hashCount) const { return ms == 0 ? 0 : hashCount * 1000 / ms; }
+	std::vector<uint64_t> vinersHashes;
+	std::vector<HwMonitor> vinerMonitors;
+	uint64_t vinerRate(const uint64_t hashCount) const { return ms == 0 ? 0 : hashCount * 1000 / ms; }
 };
 
 inline std::ostream& operator<<(std::ostream& _out, WorkingProgress _p)
@@ -111,12 +111,12 @@ inline std::ostream& operator<<(std::ostream& _out, WorkingProgress _p)
 		 << EthTealBold << std::fixed << std::setw(6) << std::setprecision(2) << mh << EthReset
 		 << " Mh/s    ";
 
-	for (size_t i = 0; i < _p.minersHashes.size(); ++i)
+	for (size_t i = 0; i < _p.vinersHashes.size(); ++i)
 	{
-		mh = _p.minerRate(_p.minersHashes[i]) / 1000000.0f;
+		mh = _p.vinerRate(_p.vinersHashes[i]) / 1000000.0f;
 		_out << "gpu/" << i << " " << EthTeal << std::fixed << std::setw(5) << std::setprecision(2) << mh << EthReset;
-		if (_p.minerMonitors.size() == _p.minersHashes.size())
-			_out << " " << EthTeal << _p.minerMonitors[i] << EthReset;
+		if (_p.vinerMonitors.size() == _p.vinersHashes.size())
+			_out << " " << EthTeal << _p.vinerMonitors[i] << EthReset;
 		_out << "  ";
 	}
 
@@ -159,7 +159,7 @@ class Miner;
 /**
  * @brief Class for hosting one or more Miners.
  * @warning Must be implemented in a threadsafe manner since it will be called from multiple
- * miner threads.
+ * viner threads.
  */
 class FarmFace
 {
@@ -177,7 +177,7 @@ public:
 };
 
 /**
- * @brief A miner - a member and adoptee of the Farm.
+ * @brief A viner - a member and adoptee of the Farm.
  * @warning Not threadsafe. It is assumed Farm will synchronise calls to/from this class.
  */
 #define LOG2_MAX_MINERS 5u
@@ -202,7 +202,7 @@ public:
 			m_work = _work;
 			workSwitchStart = std::chrono::high_resolution_clock::now();
 		}
-		kick_miner();
+		kick_viner();
 	}
 
 	uint64_t hashCount() const { return m_hashCount.load(std::memory_order_relaxed); }
@@ -223,7 +223,7 @@ protected:
 	/**
 	 * @brief No work left to be done. Pause until told to kickOff().
 	 */
-	virtual void kick_miner() = 0;
+	virtual void kick_viner() = 0;
 
 	WorkPackage work() const { Guard l(x_work); return m_work; }
 

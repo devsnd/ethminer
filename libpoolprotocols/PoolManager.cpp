@@ -19,7 +19,7 @@ static string diffToDisplay(double diff)
 	return ss.str();
 }
 
-PoolManager::PoolManager(PoolClient * client, Farm &farm, MinerType const & minerType) : Worker("main"), m_farm(farm), m_minerType(minerType)
+PoolManager::PoolManager(PoolClient * client, Farm &farm, MinerType const & vinerType) : Worker("main"), m_farm(farm), m_vinerType(vinerType)
 {
 	p_client = client;
 
@@ -30,12 +30,12 @@ PoolManager::PoolManager(PoolClient * client, Farm &farm, MinerType const & mine
 		cnote << "Connected to " << m_connections[m_activeConnectionIdx].Host() + ':' + ssPort.str();
 		if (!m_farm.isMining())
 		{
-			cnote << "Spinning up miners...";
-			if (m_minerType == MinerType::CL)
+			cnote << "Spinning up viners...";
+			if (m_vinerType == MinerType::CL)
 				m_farm.start("opencl", false);
-			else if (m_minerType == MinerType::CUDA)
+			else if (m_vinerType == MinerType::CUDA)
 				m_farm.start("cuda", false);
-			else if (m_minerType == MinerType::Mixed) {
+			else if (m_vinerType == MinerType::Mixed) {
 				m_farm.start("cuda", false);
 				m_farm.start("opencl", true);
 			}
@@ -46,7 +46,7 @@ PoolManager::PoolManager(PoolClient * client, Farm &farm, MinerType const & mine
 		cnote << "Disconnected from " + m_connections[m_activeConnectionIdx].Host();
 
 		if (m_farm.isMining()) {
-			cnote << "Shutting down miners...";
+			cnote << "Shutting down viners...";
 			m_farm.stop();
 		}
 
@@ -97,19 +97,19 @@ PoolManager::PoolManager(PoolClient * client, Farm &farm, MinerType const & mine
 	});
 	m_farm.onMinerRestart([&]() {
 		dev::setThreadName("main");
-		cnote << "Restart miners...";
+		cnote << "Restart viners...";
 
 		if (m_farm.isMining()) {
-			cnote << "Shutting down miners...";
+			cnote << "Shutting down viners...";
 			m_farm.stop();
 		}
 
-		cnote << "Spinning up miners...";
-		if (m_minerType == MinerType::CL)
+		cnote << "Spinning up viners...";
+		if (m_vinerType == MinerType::CL)
 			m_farm.start("opencl", false);
-		else if (m_minerType == MinerType::CUDA)
+		else if (m_vinerType == MinerType::CUDA)
 			m_farm.start("cuda", false);
-		else if (m_minerType == MinerType::Mixed) {
+		else if (m_vinerType == MinerType::Mixed) {
 			m_farm.start("cuda", false);
 			m_farm.start("opencl", true);
 		}
@@ -127,7 +127,7 @@ void PoolManager::stop()
 
 		if (m_farm.isMining())
 		{
-			cnote << "Shutting down miners...";
+			cnote << "Shutting down viners...";
 			m_farm.stop();
 		}
 	}
@@ -138,15 +138,15 @@ void PoolManager::workLoop()
 	while (m_running)
 	{
 		this_thread::sleep_for(chrono::seconds(1));
-		m_hashrateReportingTimePassed++;
+		m_vashrateReportingTimePassed++;
 		// Hashrate reporting
-		if (m_hashrateReportingTimePassed > m_hashrateReportingTime) {
+		if (m_vashrateReportingTimePassed > m_vashrateReportingTime) {
 			auto mp = m_farm.miningProgress();
 			std::string h = toHex(toCompactBigEndian(mp.rate(), 1));
 			std::string res = h[0] != '0' ? h : h.substr(1);
 
 			p_client->submitHashrate("0x" + res);
-			m_hashrateReportingTimePassed = 0;
+			m_vashrateReportingTimePassed = 0;
 		}
 	}
 }

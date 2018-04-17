@@ -39,9 +39,9 @@ using namespace boost::algorithm;
 void help()
 {
 	cout
-		<< "Usage ethminer [OPTIONS]" << endl
+		<< "Usage vthviner [OPTIONS]" << endl
 		<< "Options:" << endl << endl;
-	MinerCLI::streamHelp(cout);
+	VinerCLI::streamHelp(cout);
 	cout
 		<< " General Options:" << endl
 		<< "    -v,--verbosity <0 - 9>  Set the log verbosity from 0 to 9 (default: 5). Set to 9 for switch time logging." << endl
@@ -56,7 +56,7 @@ void help()
 void version()
 {
     auto* bi = ethminer_get_buildinfo();
-    cout << "ethminer version " << bi->project_version << "+git." << string(bi->git_commit_hash).substr(0, 7) << endl;
+    cout << "vthviner version " << bi->project_version << "+git." << string(bi->git_commit_hash).substr(0, 7) << endl;
     cout << "Build: " << bi->system_name << "/" << bi->build_type << "/" << bi->compiler_id << endl;
     exit(0);
 }
@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 	}
 #endif
 
-	MinerCLI m;
+	VinerCLI m;
 
 	try
 	{

@@ -44,7 +44,7 @@ private:
 	void connect_handler(const boost::system::error_code& ec, boost::asio::ip::tcp::resolver::iterator i);
 	void work_timeout_handler(const boost::system::error_code& ec);
 	void response_timeout_handler(const boost::system::error_code& ec);
-	void hashrate_event_handler(const boost::system::error_code& ec);
+	void vashrate_event_handler(const boost::system::error_code& ec);
 
 	void reset_work_timeout();
 	void readline();
@@ -56,7 +56,7 @@ private:
 
 	PoolConnection m_connection;
 
-	string m_worker; // eth-proxy only;
+	string m_worker; // vth-proxy only;
 
 	bool m_authorized;
 	std::atomic<bool> m_connected = {false};
@@ -85,7 +85,7 @@ private:
 
 	boost::asio::deadline_timer m_worktimer;
 	boost::asio::deadline_timer m_responsetimer;
-	boost::asio::deadline_timer m_hashrate_event;
+	boost::asio::deadline_timer m_vashrate_event;
 	bool m_response_pending = false;
 
 	boost::asio::ip::tcp::resolver m_resolver;
@@ -98,8 +98,8 @@ private:
 	h64 m_extraNonce;
 	int m_extraNonceHexSize;
 	
-	bool m_submit_hashrate = false;
-	string m_submit_hashrate_id;
+	bool m_submit_vashrate = false;
+	string m_submit_vashrate_id;
 
 	void processExtranonce(std::string& enonce);
 
