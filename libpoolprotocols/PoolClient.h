@@ -2,8 +2,8 @@
 
 #include <boost/asio/ip/address.hpp>
 
-#include <libethcore/Farm.h>
-#include <libethcore/Miner.h>
+#include <libvthcore/Farm.h>
+#include <libvthcore/Miner.h>
 #include <libpoolprotocols/PoolURI.h>
 
 using namespace std;

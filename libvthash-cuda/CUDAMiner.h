@@ -19,12 +19,12 @@ along with cpp-ethereum.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <time.h>
 #include <functional>
-#include <libethash/ethash.h>
+#include <libvthash/ethash.h>
 #include <libdevcore/Worker.h>
-#include <libethcore/EthashAux.h>
-#include <libethcore/Miner.h>
-#include "ethash_cuda_miner_kernel.h"
-#include "libethash/internal.h"
+#include <libvthcore/EthashAux.h>
+#include <libvthcore/Miner.h>
+#include "vthash_cuda_viner_kernel.h"
+#include "libvthash/internal.h"
 
 namespace dev
 {

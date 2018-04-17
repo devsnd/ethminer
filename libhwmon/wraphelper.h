@@ -10,7 +10,7 @@
 #define CL_HPP_CL_1_2_DEFAULT_BUILD true
 #define CL_HPP_TARGET_OPENCL_VERSION 120
 #define CL_HPP_MINIMUM_OPENCL_VERSION 120
-#include <libethash-cl/CL/cl2.hpp>
+#include <libvthash-cl/CL/cl2.hpp>
 
 #ifndef CL_DEVICE_TOPOLOGY_AMD
 #define CL_DEVICE_TOPOLOGY_AMD 0x4037

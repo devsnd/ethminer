@@ -1,6 +1,6 @@
 #include "EthStratumClient.h"
 #include <libdevcore/Log.h>
-#include <libethash/endian.h>
+#include <libvthash/endian.h>
 #include <ethminer-buildinfo.h>
 
 #include <ethash/ethash.hpp>
@@ -303,7 +303,7 @@ void EthStratumClient::connect_handler(const boost::system::error_code& ec, tcp:
 				break;
 			case EthStratumClient::ETHEREUMSTRATUM:
 				m_authorized = true;
-				os << "{\"id\": 1, \"method\": \"mining.subscribe\", \"params\": [\"vthviner/" << ethminer_get_buildinfo()->project_version << "\",\"EthereumStratum/1.0.0\"]}\n";
+				os << "{\"id\": 1, \"method\": \"mining.subscribe\", \"params\": [\"vthviner/" << vthviner_get_buildinfo()->project_version << "\",\"EthereumStratum/1.0.0\"]}\n";
 				break;
 		}
 
@@ -580,7 +580,7 @@ void EthStratumClient::processReponse(Json::Value& responseObject)
 		}
 		else if (method == "client.get_version")
 		{
-			os << "{\"error\": null, \"id\" : " << id << ", \"result\" : \"" << ethminer_get_buildinfo()->project_version << "\"}\n";
+			os << "{\"error\": null, \"id\" : " << id << ", \"result\" : \"" << vthviner_get_buildinfo()->project_version << "\"}\n";
 			async_write_with_response();
 		}
 		break;

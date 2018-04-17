@@ -18,7 +18,7 @@
 #pragma once
 
 #include <condition_variable>
-#include <libethash/ethash.h>
+#include <libvthash/ethash.h>
 #include <libdevcore/Log.h>
 #include <libdevcore/Worker.h>
 #include "BlockHeader.h"

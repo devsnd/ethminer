@@ -4,7 +4,7 @@
 /// @copyright GNU General Public License
 
 #include "CLMiner.h"
-#include <libethash/internal.h>
+#include <libvthash/internal.h>
 #include "CLMiner_kernel_stable.h"
 #include "CLMiner_kernel_experimental.h"
 
@@ -602,7 +602,7 @@ bool CLMiner::init(int epoch)
 		// patch source code
 		// note: The kernels here are simply compiled version of the respective .cl kernels
 		// into a byte array by bin2h.cmake. There is no need to load the file by hand in runtime
-		// See libethash-cl/CMakeLists.txt: add_custom_command()
+		// See libvthash-cl/CMakeLists.txt: add_custom_command()
 		// TODO: Just use C++ raw string literal.
 		string code;
 

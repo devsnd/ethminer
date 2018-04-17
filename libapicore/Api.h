@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ApiServer.h"
-#include <libethcore/Farm.h>
-#include <libethcore/Miner.h>
+#include <libvthcore/Farm.h>
+#include <libvthcore/Miner.h>
 #include <jsonrpccpp/server/connectors/tcpsocketserver.h>
 
 using namespace jsonrpc;

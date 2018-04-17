@@ -8,9 +8,9 @@
 #include <json/json.h>
 #include <libdevcore/Log.h>
 #include <libdevcore/FixedHash.h>
-#include <libethcore/Farm.h>
-#include <libethcore/EthashAux.h>
-#include <libethcore/Miner.h>
+#include <libvthcore/Farm.h>
+#include <libvthcore/EthashAux.h>
+#include <libvthcore/Miner.h>
 #include "../PoolClient.h"
 
 

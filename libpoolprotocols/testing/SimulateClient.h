@@ -2,9 +2,9 @@
 
 #include <iostream>
 #include <libdevcore/Worker.h>
-#include <libethcore/Farm.h>
-#include <libethcore/EthashAux.h>
-#include <libethcore/Miner.h>
+#include <libvthcore/Farm.h>
+#include <libvthcore/EthashAux.h>
+#include <libvthcore/Miner.h>
 #include "../PoolClient.h"
 
 using namespace std;

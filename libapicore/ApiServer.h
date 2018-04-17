@@ -1,7 +1,7 @@
 #pragma once
 
-#include <libethcore/Farm.h>
-#include <libethcore/Miner.h>
+#include <libvthcore/Farm.h>
+#include <libvthcore/Miner.h>
 #include <jsonrpccpp/server.h>
 
 using namespace jsonrpc;

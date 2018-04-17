@@ -33,19 +33,19 @@
 #include <boost/algorithm/string/trim_all.hpp>
 #include <boost/optional.hpp>
 
-#include <libethcore/Exceptions.h>
+#include <libvthcore/Exceptions.h>
 #include <libdevcore/SHA3.h>
-#include <libethcore/EthashAux.h>
-#include <libethcore/Farm.h>
+#include <libvthcore/EthashAux.h>
+#include <libvthcore/Farm.h>
 #include <ethminer-buildinfo.h>
 #if ETH_ETHASHCL
-#include <libethash-cl/CLMiner.h>
+#include <libvthash-cl/CLMiner.h>
 #endif
 #if ETH_ETHASHCUDA
-#include <libethash-cuda/CUDAMiner.h>
+#include <libvthash-cuda/CUDAMiner.h>
 #endif
 #include <libpoolprotocols/PoolManager.h>
-#include <libpoolprotocols/stratum/EthStratumClient.h>
+#include <libpoolprotocols/vtratum/EthStratumClient.h>
 #include <libpoolprotocols/getwork/EthGetworkClient.h>
 #include <libpoolprotocols/testing/SimulateClient.h>
 
@@ -673,7 +673,7 @@ public:
 			exit(0);
 		}
 
-		auto* build = ethminer_get_buildinfo();
+		auto* build = vthviner_get_buildinfo();
 		minelog << "vthviner version " << build->project_version;
 		minelog << "Build: " << build->system_name << "/" << build->build_type
 			 << "+git." << string(build->git_commit_hash).substr(0, 7);

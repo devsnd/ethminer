@@ -16,7 +16,7 @@
 */
 
 #include "EthashAux.h"
-#include <libethash/internal.h>
+#include <libvthash/internal.h>
 
 #include <ethash/ethash.hpp>
 

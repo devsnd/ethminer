@@ -19,7 +19,7 @@ HunterGate(
     LOCAL
 )
 
-project(ethminer)
+project(vthviner)
 set(PROJECT_VERSION 0.15.0.dev1)
 
 cable_set_build_type(DEFAULT Release CONFIGURATION_TYPES Release RelWithDebInfo Debug)
@@ -87,25 +87,25 @@ include(EthCompilerSettings)
 
 include(ProjectEthash)
 
-cable_add_buildinfo_library(PREFIX ethminer)
+cable_add_buildinfo_library(PREFIX vthviner)
 
 add_subdirectory(libdevcore)
-add_subdirectory(libethash)
-add_subdirectory(libethcore)
+add_subdirectory(libvthash)
+add_subdirectory(libvthcore)
 add_subdirectory(libhwmon)
 add_subdirectory(libpoolprotocols)
 
 if (ETHASHCL)
-	add_subdirectory(libethash-cl)
+	add_subdirectory(libvthash-cl)
 endif ()
 if (ETHASHCUDA)
-	add_subdirectory(libethash-cuda)
+	add_subdirectory(libvthash-cuda)
 endif ()
 if (APICORE)
 	add_subdirectory(libapicore)
 endif()
 
-add_subdirectory(ethminer)
+add_subdirectory(vthviner)
 
 
 if(WIN32)

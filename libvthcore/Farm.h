@@ -28,8 +28,8 @@
 #include <atomic>
 #include <libdevcore/Common.h>
 #include <libdevcore/Worker.h>
-#include <libethcore/Miner.h>
-#include <libethcore/BlockHeader.h>
+#include <libvthcore/Miner.h>
+#include <libvthcore/BlockHeader.h>
 #include <libhwmon/wrapnvml.h>
 #include <libhwmon/wrapadl.h>
 #if defined(__linux)
