@@ -5,7 +5,7 @@
 using namespace std;
 using namespace std::chrono;
 using namespace dev;
-using namespace eth;
+using namespace vth;
 
 SimulateClient::SimulateClient(unsigned const & difficulty, unsigned const & block) : PoolClient(), Worker("simulator")
 {

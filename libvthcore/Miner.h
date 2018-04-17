@@ -42,7 +42,7 @@ using namespace std;
 namespace dev
 {
 
-namespace eth
+namespace vth
 {
 
 enum class MinerType

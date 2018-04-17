@@ -32,7 +32,7 @@
 
 using namespace std;
 using namespace dev;
-using namespace dev::eth;
+using namespace dev::vth;
 using namespace boost::algorithm;
 
 

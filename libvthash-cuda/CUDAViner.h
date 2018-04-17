@@ -28,15 +28,15 @@ along with cpp-ethereum.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace dev
 {
-namespace eth
+namespace vth
 {
 
-class CUDAMiner: public Miner
+class CUDAViner: public Miner
 {
 
 public:
-	CUDAMiner(FarmFace& _farm, unsigned _index);
-	~CUDAMiner() override;
+	CUDAViner(FarmFace& _farm, unsigned _index);
+	~CUDAViner() override;
 
 	static unsigned instances()
 	{
@@ -86,7 +86,7 @@ public:
 		uint64_t target,
 		bool _ethStratum,
 		uint64_t _startN,
-		const dev::eth::WorkPackage& w);
+		const dev::vth::WorkPackage& w);
 
 	/* -- default values -- */
 	/// Default value of the block size. Also known as workgroup size.

@@ -18,15 +18,15 @@ along with cpp-ethereum.  If not, see <http://www.gnu.org/licenses/>.
 #undef min
 #undef max
 
-#include "CUDAMiner.h"
+#include "CUDAViner.h"
 
 using namespace std;
 using namespace dev;
-using namespace eth;
+using namespace vth;
 
-unsigned CUDAMiner::s_numInstances = 0;
+unsigned CUDAViner::s_numInstances = 0;
 
-vector<int> CUDAMiner::s_devices(MAX_MINERS, -1);
+vector<int> CUDAViner::s_devices(MAX_MINERS, -1);
 
 struct CUDAChannel: public LogChannel
 {
@@ -45,17 +45,17 @@ struct CUDASwitchChannel: public LogChannel
 #define cudalog clog(CUDAChannel)
 #define cudaswitchlog clog(CUDASwitchChannel)
 
-CUDAMiner::CUDAMiner(FarmFace& _farm, unsigned _index) :
+CUDAViner::CUDAViner(FarmFace& _farm, unsigned _index) :
 	Miner("cuda-", _farm, _index),
 	m_light(getNumDevices()) {}
 
-CUDAMiner::~CUDAMiner()
+CUDAViner::~CUDAViner()
 {
 	stopWorking();
 	kick_viner();
 }
 
-bool CUDAMiner::init(int epoch)
+bool CUDAViner::init(int epoch)
 {
 	try {
 		if (s_dagLoadMode == DAG_LOAD_MODE_SEQUENTIAL)
@@ -94,7 +94,7 @@ bool CUDAMiner::init(int epoch)
 	}
 }
 
-void CUDAMiner::workLoop()
+void CUDAViner::workLoop()
 {
 	WorkPackage current;
 	current.header = h256{1u};
@@ -146,23 +146,23 @@ void CUDAMiner::workLoop()
 	}
 }
 
-void CUDAMiner::kick_viner()
+void CUDAViner::kick_viner()
 {
 	m_new_work.store(true, std::memory_order_relaxed);
 }
 
-void CUDAMiner::setNumInstances(unsigned _instances)
+void CUDAViner::setNumInstances(unsigned _instances)
 {
         s_numInstances = std::min<unsigned>(_instances, getNumDevices());
 }
 
-void CUDAMiner::setDevices(const vector<unsigned>& _devices, unsigned _selectedDeviceCount)
+void CUDAViner::setDevices(const vector<unsigned>& _devices, unsigned _selectedDeviceCount)
 {
         for (unsigned i = 0; i < _selectedDeviceCount; i++)
                 s_devices[i] = _devices[i];
 }
 
-unsigned CUDAMiner::getNumDevices()
+unsigned CUDAViner::getNumDevices()
 {
 	int deviceCount = -1;
 	cudaError_t err = cudaGetDeviceCount(&deviceCount);
@@ -181,7 +181,7 @@ unsigned CUDAMiner::getNumDevices()
 	throw std::runtime_error{cudaGetErrorString(err)};
 }
 
-void CUDAMiner::listDevices()
+void CUDAViner::listDevices()
 {
 	try
 	{
@@ -207,7 +207,7 @@ void CUDAMiner::listDevices()
 	}
 }
 
-bool CUDAMiner::configureGPU(
+bool CUDAViner::configureGPU(
 	unsigned _blockSize,
 	unsigned _gridSize,
 	unsigned _numStreams,
@@ -240,16 +240,16 @@ bool CUDAMiner::configureGPU(
 	return true;
 }
 
-void CUDAMiner::setParallelHash(unsigned _parallelHash)
+void CUDAViner::setParallelHash(unsigned _parallelHash)
 {
   	m_parallelHash = _parallelHash;
 }
 
-unsigned const CUDAMiner::c_defaultBlockSize = 128;
-unsigned const CUDAMiner::c_defaultGridSize = 8192; // * CL_DEFAULT_LOCAL_WORK_SIZE
-unsigned const CUDAMiner::c_defaultNumStreams = 2;
+unsigned const CUDAViner::c_defaultBlockSize = 128;
+unsigned const CUDAViner::c_defaultGridSize = 8192; // * CL_DEFAULT_LOCAL_WORK_SIZE
+unsigned const CUDAViner::c_defaultNumStreams = 2;
 
-bool CUDAMiner::cuda_configureGPU(
+bool CUDAViner::cuda_configureGPU(
 	size_t numDevices,
 	const vector<int>& _devices,
 	unsigned _blockSize,
@@ -301,14 +301,14 @@ bool CUDAMiner::cuda_configureGPU(
 	}
 }
 
-unsigned CUDAMiner::m_parallelHash = 4;
-unsigned CUDAMiner::s_blockSize = CUDAMiner::c_defaultBlockSize;
-unsigned CUDAMiner::s_gridSize = CUDAMiner::c_defaultGridSize;
-unsigned CUDAMiner::s_numStreams = CUDAMiner::c_defaultNumStreams;
-unsigned CUDAMiner::s_scheduleFlag = 0;
-bool CUDAMiner::s_noeval = false;
+unsigned CUDAViner::m_parallelHash = 4;
+unsigned CUDAViner::s_blockSize = CUDAViner::c_defaultBlockSize;
+unsigned CUDAViner::s_gridSize = CUDAViner::c_defaultGridSize;
+unsigned CUDAViner::s_numStreams = CUDAViner::c_defaultNumStreams;
+unsigned CUDAViner::s_scheduleFlag = 0;
+bool CUDAViner::s_noeval = false;
 
-bool CUDAMiner::cuda_init(
+bool CUDAViner::cuda_init(
 	size_t numDevices,
 	vthash_light_t _light,
 	uint8_t const* _lightData,
@@ -437,12 +437,12 @@ cpyDag:
 	}
 }
 
-void CUDAMiner::search(
+void CUDAViner::search(
 	uint8_t const* header,
 	uint64_t target,
 	bool _ethStratum,
 	uint64_t _startN,
-	const dev::eth::WorkPackage& w)
+	const dev::vth::WorkPackage& w)
 {
 	bool initialize = false;
 	if (memcmp(&m_current_header, header, sizeof(hash32_t)))

@@ -6,7 +6,7 @@
 
 using namespace jsonrpc;
 using namespace dev;
-using namespace dev::eth;
+using namespace dev::vth;
 using namespace std::chrono;
 
 class ApiServer : public AbstractServer<ApiServer>

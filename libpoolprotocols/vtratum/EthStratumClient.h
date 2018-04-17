@@ -16,7 +16,7 @@
 
 using namespace std;
 using namespace dev;
-using namespace dev::eth;
+using namespace dev::vth;
 
 class EthStratumClient : public PoolClient
 {

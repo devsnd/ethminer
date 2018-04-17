@@ -2,15 +2,15 @@
 #include "EthashAux.h"
 
 using namespace dev;
-using namespace eth;
+using namespace vth;
 
-unsigned dev::eth::Miner::s_dagLoadMode = 0;
+unsigned dev::vth::Miner::s_dagLoadMode = 0;
 
-unsigned dev::eth::Miner::s_dagLoadIndex = 0;
+unsigned dev::vth::Miner::s_dagLoadIndex = 0;
 
-unsigned dev::eth::Miner::s_dagCreateDevice = 0;
+unsigned dev::vth::Miner::s_dagCreateDevice = 0;
 
-uint8_t* dev::eth::Miner::s_dagInHostMemory = NULL;
+uint8_t* dev::vth::Miner::s_dagInHostMemory = NULL;
 
-bool dev::eth::Miner::s_exit = false;
+bool dev::vth::Miner::s_exit = false;
 

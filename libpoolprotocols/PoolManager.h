@@ -14,7 +14,7 @@ using namespace std;
 
 namespace dev
 {
-	namespace eth
+	namespace vth
 	{
 		class PoolManager : public Worker
 		{

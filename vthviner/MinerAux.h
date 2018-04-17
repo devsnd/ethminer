@@ -42,7 +42,7 @@
 #include <libvthash-cl/CLMiner.h>
 #endif
 #if ETH_ETHASHCUDA
-#include <libvthash-cuda/CUDAMiner.h>
+#include <libvthash-cuda/CUDAViner.h>
 #endif
 #include <libpoolprotocols/PoolManager.h>
 #include <libpoolprotocols/vtratum/EthStratumClient.h>
@@ -58,7 +58,7 @@
 
 using namespace std;
 using namespace dev;
-using namespace dev::eth;
+using namespace dev::vth;
 
 
 class BadArgument: public Exception {};
@@ -668,7 +668,7 @@ public:
 #endif
 #if ETH_ETHASHCUDA
 			if (m_vinerType == MinerType::CUDA || m_vinerType == MinerType::Mixed)
-				CUDAMiner::listDevices();
+				CUDAViner::listDevices();
 #endif
 			exit(0);
 		}
@@ -711,12 +711,12 @@ public:
 #if ETH_ETHASHCUDA
 			if (m_cudaDeviceCount > 0)
 			{
-				CUDAMiner::setDevices(m_cudaDevices, m_cudaDeviceCount);
+				CUDAViner::setDevices(m_cudaDevices, m_cudaDeviceCount);
 				m_miningThreads = m_cudaDeviceCount;
 			}
 
-			CUDAMiner::setNumInstances(m_miningThreads);
-			if (!CUDAMiner::configureGPU(
+			CUDAViner::setNumInstances(m_miningThreads);
+			if (!CUDAViner::configureGPU(
 				m_cudaBlockSize,
 				m_cudaGridSize,
 				m_numStreams,
@@ -729,7 +729,7 @@ public:
 				))
 				exit(1);
 
-			CUDAMiner::setParallelHash(m_parallelHash);
+			CUDAViner::setParallelHash(m_parallelHash);
 #else
 			cerr << "CUDA support disabled. Configure project build with -DETHASHCUDA=ON" << endl;
 			exit(1);
@@ -813,9 +813,9 @@ public:
 #endif
 #if ETH_ETHASHCUDA
 			<< " CUDA configuration:" << endl
-			<< "    --cuda-block-size Set the CUDA block work size. Default is " << toString(CUDAMiner::c_defaultBlockSize) << endl
-			<< "    --cuda-grid-size Set the CUDA grid size. Default is " << toString(CUDAMiner::c_defaultGridSize) << endl
-			<< "    --cuda-streams Set the number of CUDA streams. Default is " << toString(CUDAMiner::c_defaultNumStreams) << endl
+			<< "    --cuda-block-size Set the CUDA block work size. Default is " << toString(CUDAViner::c_defaultBlockSize) << endl
+			<< "    --cuda-grid-size Set the CUDA grid size. Default is " << toString(CUDAViner::c_defaultGridSize) << endl
+			<< "    --cuda-streams Set the number of CUDA streams. Default is " << toString(CUDAViner::c_defaultNumStreams) << endl
 			<< "    --cuda-schedule <mode> Set the schedule mode for CUDA threads waiting for CUDA devices to finish work. Default is 'sync'. Possible values are:" << endl
 			<< "        auto  - Uses a heuristic based on the number of active CUDA contexts in the process C and the number of logical processors in the system P. If C > P, then yield else spin." << endl
 			<< "        spin  - Instruct CUDA to actively spin when waiting for results from the device." << endl
@@ -852,7 +852,7 @@ private:
 #endif
 #if ETH_ETHASHCUDA
 		sealers["cuda"] = Farm::SealerDescriptor{
-			&CUDAMiner::instances, [](FarmFace& _farm, unsigned _index){ return new CUDAMiner(_farm, _index); }
+			&CUDAViner::instances, [](FarmFace& _farm, unsigned _index){ return new CUDAViner(_farm, _index); }
 		};
 #endif
 		f.setSealers(sealers);
@@ -917,7 +917,7 @@ private:
 		sealers["opencl"] = Farm::SealerDescriptor{&CLMiner::instances, [](FarmFace& _farm, unsigned _index){ return new CLMiner(_farm, _index); }};
 #endif
 #if ETH_ETHASHCUDA
-		sealers["cuda"] = Farm::SealerDescriptor{&CUDAMiner::instances, [](FarmFace& _farm, unsigned _index){ return new CUDAMiner(_farm, _index); }};
+		sealers["cuda"] = Farm::SealerDescriptor{&CUDAViner::instances, [](FarmFace& _farm, unsigned _index){ return new CUDAViner(_farm, _index); }};
 #endif
 
 		PoolClient *client = nullptr;
@@ -1007,10 +1007,10 @@ private:
 #if ETH_ETHASHCUDA
 	unsigned m_cudaDeviceCount = 0;
 	vector<unsigned> m_cudaDevices = vector<unsigned>(MAX_MINERS, -1);
-	unsigned m_numStreams = CUDAMiner::c_defaultNumStreams;
+	unsigned m_numStreams = CUDAViner::c_defaultNumStreams;
 	unsigned m_cudaSchedule = 4; // sync
-	unsigned m_cudaGridSize = CUDAMiner::c_defaultGridSize;
-	unsigned m_cudaBlockSize = CUDAMiner::c_defaultBlockSize;
+	unsigned m_cudaGridSize = CUDAViner::c_defaultGridSize;
+	unsigned m_cudaBlockSize = CUDAViner::c_defaultBlockSize;
 	bool m_cudaNoEval = false;
 	unsigned m_parallelHash    = 4;
 #endif

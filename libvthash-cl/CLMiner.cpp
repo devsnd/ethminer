@@ -9,11 +9,11 @@
 #include "CLMiner_kernel_experimental.h"
 
 using namespace dev;
-using namespace eth;
+using namespace vth;
 
 namespace dev
 {
-namespace eth
+namespace vth
 {
 
 unsigned CLMiner::s_workgroupSize = CLMiner::c_defaultLocalWorkSize;

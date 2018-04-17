@@ -23,7 +23,7 @@
 using namespace std;
 using namespace chrono;
 using namespace dev;
-using namespace eth;
+using namespace vth;
 
 EthashAux& EthashAux::get()
 {

@@ -7,7 +7,7 @@
 
 using namespace jsonrpc;
 using namespace dev;
-using namespace dev::eth;
+using namespace dev::vth;
 
 class Api
 {

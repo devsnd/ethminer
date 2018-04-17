@@ -25,7 +25,7 @@
 
 namespace dev
 {
-namespace eth
+namespace vth
 {
 
 // information to add to exceptions

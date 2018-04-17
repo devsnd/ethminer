@@ -33,7 +33,7 @@
 
 namespace dev
 {
-namespace eth
+namespace vth
 {
 
 enum CLKernelName {

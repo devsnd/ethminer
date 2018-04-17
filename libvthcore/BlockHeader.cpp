@@ -10,7 +10,7 @@
 
 namespace dev
 {
-namespace eth
+namespace vth
 {
 h256 const& BlockHeader::boundary() const
 {
@@ -36,5 +36,5 @@ void BlockHeader::streamRLPFields(RLPStream& _s) const
        << m_receiptsRoot << m_logBloom << m_difficulty << m_number << m_gasLimit << m_gasUsed
        << m_timestamp << m_extraData;
 }
-}  // namespace eth
+}  // namespace vth
 }  // namespace dev

@@ -39,7 +39,7 @@
 namespace dev
 {
 
-namespace eth
+namespace vth
 {
 
 /**

@@ -12,7 +12,7 @@
 
 namespace dev
 {
-namespace eth
+namespace vth
 {
 /// An Ethereum address: 20 bytes.
 using Address = h160;
@@ -100,5 +100,5 @@ private:
     uint64_t m_nonce = 0;
 };
 
-}  // namespace eth
+}  // namespace vth
 }  // namespace dev
