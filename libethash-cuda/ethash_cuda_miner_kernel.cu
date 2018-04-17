@@ -4,8 +4,8 @@
 * thanks to sp_, trpuvot, djm34, cbuchner for things i took from ccviner.
 */
 
-#include "ethash_cuda_viner_kernel.h"
-#include "ethash_cuda_viner_kernel_globals.h"
+#include "ethash_cuda_miner_kernel.h"
+#include "ethash_cuda_miner_kernel_globals.h"
 #include "cuda_helper.h"
 
 #include "fnv.cuh"

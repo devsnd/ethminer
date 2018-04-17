@@ -378,7 +378,7 @@ bool CUDAMiner::cuda_init(
 		if(dagSize128 != m_dag_size || !dag) // create buffer for dag
 			CUDA_SAFE_CALL(cudaMalloc(reinterpret_cast<void**>(&dag), dagSize));
 			
-		set_constants(dag, dagSize128, light, lightSize64); //in ethash_cuda_viner_kernel.cu
+		set_constants(dag, dagSize128, light, lightSize64); //in ethash_cuda_miner_kernel.cu
 		
 		if(dagSize128 != m_dag_size || !dag)
 		{
