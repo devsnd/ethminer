@@ -31,12 +31,12 @@ build_script:
 after_build:
   ps: |
     if ($env:configuration -ne "Release") {
-      Get-Item build/ethminer-*-Windows.* | Rename-Item -NewName { $_.name -Replace 'ethminer','ethminer-dbg' }
+      Get-Item build/vthviner-*-Windows.* | Rename-Item -NewName { $_.name -Replace 'vthviner','vthviner-dbg' }
     }
 
 artifacts:
-  - path: build/ethminer-*.zip
-    name: ethminer
+  - path: build/vthviner-*.zip
+    name: vthviner
 
 before_deploy:
   # Read variables dumped by CMake configuration.
