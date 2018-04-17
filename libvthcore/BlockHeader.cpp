@@ -3,7 +3,7 @@
 /// Licensed under GNU General Public License, Version 3. See the LICENSE file.
 
 #include "BlockHeader.h"
-#include "EthashAux.h"
+#include "VthashAux.h"
 #include <libdevcore/Common.h>
 #include <libdevcore/Log.h>
 #include <libdevcore/RLP.h>

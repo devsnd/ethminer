@@ -65,8 +65,8 @@ bool CUDAViner::init(int epoch)
 
 		cnote << "Initialising viner " << index;
 
-		EthashAux::LightType light;
-		light = EthashAux::light(epoch);
+		VthashAux::LightType light;
+		light = VthashAux::light(epoch);
 		bytesConstRef lightData = light->data();
 
 		cuda_init(getNumDevices(), light->light, lightData.data(), lightData.size(), 
@@ -522,7 +522,7 @@ void CUDAViner::search(
                         farm.submitProof(Solution{nonces[i], mixes[i], w, m_new_work});
                     else
                     {
-                        Result r = EthashAux::eval(w.epoch, w.header, nonces[i]);
+                        Result r = VthashAux::eval(w.epoch, w.header, nonces[i]);
                         if (r.value < w.boundary)
                             farm.submitProof(Solution{nonces[i], r.mixHash, w, m_new_work});
                         else

@@ -1,6 +1,6 @@
 set(SOURCES
 	BlockHeader.h BlockHeader.cpp
-	EthashAux.h EthashAux.cpp
+	VthashAux.h VthashAux.cpp
 	Exceptions.h
 	Farm.h
 	Miner.h Miner.cpp

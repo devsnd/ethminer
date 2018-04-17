@@ -35,11 +35,11 @@
 
 #include <libvthcore/Exceptions.h>
 #include <libdevcore/SHA3.h>
-#include <libvthcore/EthashAux.h>
+#include <libvthcore/VthashAux.h>
 #include <libvthcore/Farm.h>
 #include <vthviner-buildinfo.h>
 #if ETH_ETHASHCL
-#include <libvthash-cl/CLMiner.h>
+#include <libvthash-cl/CLVider.h>
 #endif
 #if ETH_ETHASHCUDA
 #include <libvthash-cuda/CUDAViner.h>
@@ -664,7 +664,7 @@ public:
 		{
 #if ETH_ETHASHCL
 			if (m_vinerType == MinerType::CL || m_vinerType == MinerType::Mixed)
-				CLMiner::listDevices();
+				CLVider::listDevices();
 #endif
 #if ETH_ETHASHCUDA
 			if (m_vinerType == MinerType::CUDA || m_vinerType == MinerType::Mixed)
@@ -683,14 +683,14 @@ public:
 #if ETH_ETHASHCL
 			if (m_openclDeviceCount > 0)
 			{
-				CLMiner::setDevices(m_openclDevices, m_openclDeviceCount);
+				CLVider::setDevices(m_openclDevices, m_openclDeviceCount);
 				m_miningThreads = m_openclDeviceCount;
 			}
 
-			CLMiner::setCLKernel(m_openclSelectedKernel);
-			CLMiner::setThreadsPerHash(m_openclThreadsPerHash);
+			CLVider::setCLKernel(m_openclSelectedKernel);
+			CLVider::setThreadsPerHash(m_openclThreadsPerHash);
 
-			if (!CLMiner::configureGPU(
+			if (!CLVider::configureGPU(
 					m_localWorkSize,
 					m_globalWorkSizeMultiplier,
 					m_openclPlatform,
@@ -700,7 +700,7 @@ public:
 					m_exit
 				))
 				exit(1);
-			CLMiner::setNumInstances(m_miningThreads);
+			CLVider::setNumInstances(m_miningThreads);
 #else
 			cerr << "Selected GPU mining without having compiled with -DETHASHCL=1" << endl;
 			exit(1);
@@ -807,8 +807,8 @@ public:
 			<< "    --cl-kernel <n>  Use a different OpenCL kernel (default: use stable kernel)" << endl
 			<< "        0: stable kernel" << endl
 			<< "        1: experimental kernel" << endl
-			<< "    --cl-local-work Set the OpenCL local work size. Default is " << CLMiner::c_defaultLocalWorkSize << endl
-			<< "    --cl-global-work Set the OpenCL global work size as a multiple of the local work size. Default is " << CLMiner::c_defaultGlobalWorkSizeMultiplier << " * " << CLMiner::c_defaultLocalWorkSize << endl
+			<< "    --cl-local-work Set the OpenCL local work size. Default is " << CLVider::c_defaultLocalWorkSize << endl
+			<< "    --cl-global-work Set the OpenCL global work size as a multiple of the local work size. Default is " << CLVider::c_defaultGlobalWorkSizeMultiplier << " * " << CLVider::c_defaultLocalWorkSize << endl
 			<< "    --cl-parallel-hash <1 2 ..8> Define how many threads to associate per hash. Default=8" << endl
 #endif
 #if ETH_ETHASHCUDA
@@ -847,7 +847,7 @@ private:
 		map<string, Farm::SealerDescriptor> sealers;
 #if ETH_ETHASHCL
 		sealers["opencl"] = Farm::SealerDescriptor{
-			&CLMiner::instances, [](FarmFace& _farm, unsigned _index){ return new CLMiner(_farm, _index); }
+			&CLVider::instances, [](FarmFace& _farm, unsigned _index){ return new CLVider(_farm, _index); }
 		};
 #endif
 #if ETH_ETHASHCUDA
@@ -914,7 +914,7 @@ private:
 	{
 		map<string, Farm::SealerDescriptor> sealers;
 #if ETH_ETHASHCL
-		sealers["opencl"] = Farm::SealerDescriptor{&CLMiner::instances, [](FarmFace& _farm, unsigned _index){ return new CLMiner(_farm, _index); }};
+		sealers["opencl"] = Farm::SealerDescriptor{&CLVider::instances, [](FarmFace& _farm, unsigned _index){ return new CLVider(_farm, _index); }};
 #endif
 #if ETH_ETHASHCUDA
 		sealers["cuda"] = Farm::SealerDescriptor{&CUDAViner::instances, [](FarmFace& _farm, unsigned _index){ return new CUDAViner(_farm, _index); }};
@@ -1001,8 +1001,8 @@ private:
 	unsigned m_openclDeviceCount = 0;
 	vector<unsigned> m_openclDevices = vector<unsigned>(MAX_MINERS, -1);
 	unsigned m_openclThreadsPerHash = 8;
-	unsigned m_globalWorkSizeMultiplier = CLMiner::c_defaultGlobalWorkSizeMultiplier;
-	unsigned m_localWorkSize = CLMiner::c_defaultLocalWorkSize;
+	unsigned m_globalWorkSizeMultiplier = CLVider::c_defaultGlobalWorkSizeMultiplier;
+	unsigned m_localWorkSize = CLVider::c_defaultLocalWorkSize;
 #endif
 #if ETH_ETHASHCUDA
 	unsigned m_cudaDeviceCount = 0;

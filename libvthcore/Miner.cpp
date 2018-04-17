@@ -1,5 +1,5 @@
 #include "Miner.h"
-#include "EthashAux.h"
+#include "VthashAux.h"
 
 using namespace dev;
 using namespace vth;

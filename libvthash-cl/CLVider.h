@@ -6,7 +6,7 @@
 #pragma once
 
 #include <libdevcore/Worker.h>
-#include <libvthcore/EthashAux.h>
+#include <libvthcore/VthashAux.h>
 #include <libvthcore/Miner.h>
 
 #define CL_USE_DEPRECATED_OPENCL_1_2_APIS true
@@ -41,7 +41,7 @@ enum CLKernelName {
 	Experimental,
 };
 
-class CLMiner: public Miner
+class CLVider: public Miner
 {
 public:
 	/* -- default values -- */
@@ -53,8 +53,8 @@ public:
 	/// Default value of the kernel is the original one
 	static const CLKernelName c_defaultKernelName = CLKernelName::Stable;
 
-	CLMiner(FarmFace& _farm, unsigned _index);
-	~CLMiner() override;
+	CLVider(FarmFace& _farm, unsigned _index);
+	~CLVider() override;
 
 	static unsigned instances() { return s_numInstances > 0 ? s_numInstances : 1; }
 	static unsigned getNumDevices();

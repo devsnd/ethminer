@@ -21,7 +21,7 @@ along with cpp-ethereum.  If not, see <http://www.gnu.org/licenses/>.
 #include <functional>
 #include <libvthash/ethash.h>
 #include <libdevcore/Worker.h>
-#include <libvthcore/EthashAux.h>
+#include <libvthcore/VthashAux.h>
 #include <libvthcore/Miner.h>
 #include "vthash_cuda_viner_kernel.h"
 #include "libvthash/internal.h"

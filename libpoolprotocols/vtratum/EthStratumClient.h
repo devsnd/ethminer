@@ -9,7 +9,7 @@
 #include <libdevcore/Log.h>
 #include <libdevcore/FixedHash.h>
 #include <libvthcore/Farm.h>
-#include <libvthcore/EthashAux.h>
+#include <libvthcore/VthashAux.h>
 #include <libvthcore/Miner.h>
 #include "../PoolClient.h"
 

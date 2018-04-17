@@ -15,7 +15,7 @@
 	along with cpp-ethereum.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "EthashAux.h"
+#include "VthashAux.h"
 #include <libvthash/internal.h>
 
 #include <ethash/ethash.hpp>
@@ -25,15 +25,15 @@ using namespace chrono;
 using namespace dev;
 using namespace vth;
 
-EthashAux& EthashAux::get()
+VthashAux& VthashAux::get()
 {
-	static EthashAux instance;
+	static VthashAux instance;
 	return instance;
 }
 
-EthashAux::LightType EthashAux::light(int epoch)
+VthashAux::LightType VthashAux::light(int epoch)
 {
-    EthashAux& ethash = EthashAux::get();
+    VthashAux& ethash = VthashAux::get();
 
     Guard l(ethash.x_lights);
 
@@ -44,24 +44,24 @@ EthashAux::LightType EthashAux::light(int epoch)
     return (ethash.m_lights[epoch] = make_shared<LightAllocation>(epoch));
 }
 
-EthashAux::LightAllocation::LightAllocation(int epoch)
+VthashAux::LightAllocation::LightAllocation(int epoch)
 {
     int blockNumber = epoch * ETHASH_EPOCH_LENGTH;
     light = vthash_light_new(blockNumber);
     size = vthash_get_cachesize(blockNumber);
 }
 
-EthashAux::LightAllocation::~LightAllocation()
+VthashAux::LightAllocation::~LightAllocation()
 {
 	vthash_light_delete(light);
 }
 
-bytesConstRef EthashAux::LightAllocation::data() const
+bytesConstRef VthashAux::LightAllocation::data() const
 {
 	return bytesConstRef((byte const*)light->cache, size);
 }
 
-Result EthashAux::LightAllocation::compute(h256 const& _headerHash, uint64_t _nonce) const
+Result VthashAux::LightAllocation::compute(h256 const& _headerHash, uint64_t _nonce) const
 {
 	vthash_return_value r = vthash_light_compute(light, *(vthash_h256_t*)_headerHash.data(), _nonce);
 	if (!r.success)
@@ -69,7 +69,7 @@ Result EthashAux::LightAllocation::compute(h256 const& _headerHash, uint64_t _no
 	return Result{h256((uint8_t*)&r.result, h256::ConstructFromPointer), h256((uint8_t*)&r.mix_hash, h256::ConstructFromPointer)};
 }
 
-Result EthashAux::eval(int epoch, h256 const& _headerHash, uint64_t _nonce) noexcept
+Result VthashAux::eval(int epoch, h256 const& _headerHash, uint64_t _nonce) noexcept
 {
     auto headerHash = ethash::hash256::from_bytes(_headerHash.data());
     auto result = ethash::managed::hash(epoch, headerHash, _nonce);

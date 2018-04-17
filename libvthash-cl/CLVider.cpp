@@ -3,10 +3,10 @@
 /// @file
 /// @copyright GNU General Public License
 
-#include "CLMiner.h"
+#include "CLVider.h"
 #include <libvthash/internal.h>
-#include "CLMiner_kernel_stable.h"
-#include "CLMiner_kernel_experimental.h"
+#include "CLVider_kernel_stable.h"
+#include "CLVider_kernel_experimental.h"
 
 using namespace dev;
 using namespace vth;
@@ -16,10 +16,10 @@ namespace dev
 namespace vth
 {
 
-unsigned CLMiner::s_workgroupSize = CLMiner::c_defaultLocalWorkSize;
-unsigned CLMiner::s_initialGlobalWorkSize = CLMiner::c_defaultGlobalWorkSizeMultiplier * CLMiner::c_defaultLocalWorkSize;
-unsigned CLMiner::s_threadsPerHash = 8;
-CLKernelName CLMiner::s_clKernelName = CLMiner::c_defaultKernelName;
+unsigned CLVider::s_workgroupSize = CLVider::c_defaultLocalWorkSize;
+unsigned CLVider::s_initialGlobalWorkSize = CLVider::c_defaultGlobalWorkSizeMultiplier * CLVider::c_defaultLocalWorkSize;
+unsigned CLVider::s_threadsPerHash = 8;
+CLKernelName CLVider::s_clKernelName = CLVider::c_defaultKernelName;
 
 constexpr size_t c_maxSearchResults = 1;
 
@@ -259,21 +259,21 @@ std::vector<cl::Device> getDevices(std::vector<cl::Platform> const& _platforms, 
 }
 }
 
-unsigned CLMiner::s_platformId = 0;
-unsigned CLMiner::s_numInstances = 0;
-vector<int> CLMiner::s_devices(MAX_MINERS, -1);
+unsigned CLVider::s_platformId = 0;
+unsigned CLVider::s_numInstances = 0;
+vector<int> CLVider::s_devices(MAX_MINERS, -1);
 
-CLMiner::CLMiner(FarmFace& _farm, unsigned _index):
+CLVider::CLVider(FarmFace& _farm, unsigned _index):
 	Miner("cl-", _farm, _index)
 {}
 
-CLMiner::~CLMiner()
+CLVider::~CLVider()
 {
 	stopWorking();
 	kick_viner();
 }
 
-void CLMiner::workLoop()
+void CLVider::workLoop()
 {
 	// Memory for zero-ing buffers. Cannot be static because crashes on macOS.
 	uint32_t const c_zero = 0;
@@ -360,7 +360,7 @@ void CLMiner::workLoop()
 			// Report results while the kernel is running.
 			// It takes some time because ethash must be re-evaluated on CPU.
 			if (nonce != 0) {
-				Result r = EthashAux::eval(current.epoch, current.header, nonce);
+				Result r = VthashAux::eval(current.epoch, current.header, nonce);
 				if (r.value < current.boundary)
 					farm.submitProof(Solution{nonce, r.mixHash, current, current.header != w.header});
 				else {
@@ -391,9 +391,9 @@ void CLMiner::workLoop()
 	}
 }
 
-void CLMiner::kick_viner() {}
+void CLVider::kick_viner() {}
 
-unsigned CLMiner::getNumDevices()
+unsigned CLVider::getNumDevices()
 {
 	vector<cl::Platform> platforms = getPlatforms();
 	if (platforms.empty())
@@ -408,7 +408,7 @@ unsigned CLMiner::getNumDevices()
 	return devices.size();
 }
 
-void CLMiner::listDevices()
+void CLVider::listDevices()
 {
 	string outString ="\nListing OpenCL devices.\nFORMAT: [platformID] [deviceID] deviceName\n";
 	unsigned int i = 0;
@@ -448,7 +448,7 @@ void CLMiner::listDevices()
 	std::cout << outString;
 }
 
-bool CLMiner::configureGPU(
+bool CLVider::configureGPU(
 	unsigned _localWorkSize,
 	unsigned _globalWorkSizeMultiplier,
 	unsigned _platformId,
@@ -499,9 +499,9 @@ bool CLMiner::configureGPU(
 	return false;
 }
 
-bool CLMiner::init(int epoch)
+bool CLVider::init(int epoch)
 {
-	EthashAux::LightType light = EthashAux::light(epoch);
+	VthashAux::LightType light = VthashAux::light(epoch);
 
 	// get all platforms
 	try
@@ -608,17 +608,17 @@ bool CLMiner::init(int epoch)
 
 		if ( s_clKernelName == CLKernelName::Experimental ) {
 			cllog << "OpenCL kernel: Experimental kernel";
-			code = string(CLMiner_kernel_experimental, CLMiner_kernel_experimental + sizeof(CLMiner_kernel_experimental));
+			code = string(CLVider_kernel_experimental, CLVider_kernel_experimental + sizeof(CLVider_kernel_experimental));
 		}
 		else { //if(s_clKernelName == CLKernelName::Stable)
 			cllog << "OpenCL kernel: Stable kernel";
 
-			//CLMiner_kernel_stable.cl will do a #undef THREADS_PER_HASH
+			//CLVider_kernel_stable.cl will do a #undef THREADS_PER_HASH
 			if(s_threadsPerHash != 8) {
 				cwarn << "The current stable OpenCL kernel only supports exactly 8 threads. Thread parameter will be ignored.";
 			}
 
-			code = string(CLMiner_kernel_stable, CLMiner_kernel_stable + sizeof(CLMiner_kernel_stable));
+			code = string(CLVider_kernel_stable, CLVider_kernel_stable + sizeof(CLVider_kernel_stable));
 		}
 		addDefinition(code, "GROUP_SIZE", m_workgroupSize);
 		addDefinition(code, "DAG_SIZE", dagSize128);

@@ -28,7 +28,7 @@
 #include <libdevcore/Common.h>
 #include <libdevcore/Log.h>
 #include <libdevcore/Worker.h>
-#include "EthashAux.h"
+#include "VthashAux.h"
 
 #define MINER_WAIT_STATE_WORK	 1
 

@@ -36,7 +36,7 @@ struct Result
 	h256 mixHash;
 };
 
-class EthashAux
+class VthashAux
 {
 public:
 	struct LightAllocation
@@ -56,8 +56,8 @@ public:
 	static Result eval(int epoch, h256 const& _headerHash, uint64_t  _nonce) noexcept;
 
 private:
-    EthashAux() = default;
-    static EthashAux& get();
+    VthashAux() = default;
+    static VthashAux& get();
 
     Mutex x_lights;
     std::unordered_map<int, LightType> m_lights;
