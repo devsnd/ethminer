@@ -71,3 +71,12 @@ project.pbxproj
 doc/html
 *.autosave
 node_modules/
+
+CMakeFiles/
+_3rdParty/
+CPackConfig.cmake
+CPackSourceConfig.cmake
+CMakeCache.txt
+cmake/
+deps/
+
