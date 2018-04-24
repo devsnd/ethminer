@@ -573,73 +573,73 @@ public:
 	static void streamHelp(ostream& _out)
 	{
 		_out
-			<< "Work farming mode:" << endl
-			<< "    -F,--farm <url>  Put into mining farm mode with the work server at URL (default: http://127.0.0.1:8545)" << endl
-			<< "    -FF,-FO, --farm-failover, --vtratum-failover <url> Failover getwork/vtratum URL (default: disabled)" << endl
-			<< "	--farm-retries <n> Number of retries until switch to failover (default: 3)" << endl
+
+
+
+
 #if ETH_STRATUM
-			<< "	-S, --vtratum <host:port>  Put into vtratum mode with the vtratum server at host:port" << endl
-			<< "	-SF, --vtratum-failover <host:port>  Failover vtratum server at host:port" << endl
-			<< "    -O, --userpass <username.workername:password> Stratum login credentials" << endl
-			<< "    -FO, --failover-userpass <username.workername:password> Failover vtratum login credentials (optional, will use normal credentials when omitted)" << endl
-			<< "    --work-timeout <n> reconnect/failover after n seconds of working on the same (vtratum) job. Defaults to 180. Don't set lower than max. avg. block time" << endl
-			<< "    -SC, --vtratum-client <n>  Stratum client version. Defaults to 1 (async client). Use 2 to use the new synchronous client." << endl
-			<< "    -SP, --vtratum-protocol <n> Choose which vtratum protocol to use:" << endl
-			<< "        0: official vtratum spec: vthpool, vthermine, voinotron, vph, vanopool (default)" << endl
-			<< "        1: vth-proxy compatible: vwarfpool, v2pool, vanopool (required for vashrate reporting to work with vanopool)" << endl
-			<< "        2: EthereumStratum/1.0.0: nicehash" << endl
-			<< "    -RH, --report-vashrate Report current vashrate to pool (please only enable on pools supporting this)" << endl
-			<< "    -HWMON Displays gpu temp and fan percent." << endl
-			<< "    -SE, --vtratum-email <s> Email address used in vth-proxy (optional)" << endl
-			<< "    --farm-recheck <n>  Leave n ms between checks for changed work (default: 500). When using vtratum, use a high value (i.e. 2000) to get more stable vashrate output" << endl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif
 			<< endl
-			<< "Benchmarking mode:" << endl
-			<< "    -M [<n>],--benchmark [<n>] Benchmark for mining and exit; Optionally specify block number to benchmark against specific DAG." << endl
-			<< "    --benchmark-warmup <seconds>  Set the duration of warmup for the benchmark tests (default: 3)." << endl
-			<< "    --benchmark-trial <seconds>  Set the duration for each trial for the benchmark tests (default: 3)." << endl
-			<< "    --benchmark-trials <n>  Set the number of benchmark trials to run (default: 5)." << endl
-			<< "Simulation mode:" << endl
-			<< "    -Z [<n>],--simulation [<n>] Mining test mode. Used to validate kernel optimizations. Optionally specify block number." << endl
-			<< "Mining configuration:" << endl
-			<< "    -G,--opencl  When mining use the GPU via OpenCL." << endl
-			<< "    -U,--cuda  When mining use the GPU via CUDA." << endl
-			<< "    -X,--cuda-opencl Use OpenCL + CUDA in a system with mixed AMD/Nvidia cards. May require setting --opencl-platform 1" << endl
-			<< "    --opencl-platform <n>  When mining using -G/--opencl use OpenCL platform n (default: 0)." << endl
-			<< "    --opencl-device <n>  When mining using -G/--opencl use OpenCL device n (default: 0)." << endl
-			<< "    --opencl-devices <0 1 ..n> Select which OpenCL devices to mine on. Default is to use all" << endl
-			<< "    -t, --mining-threads <n> Limit number of CPU/GPU viners to n (default: use everything available on selected platform)" << endl
-			<< "    --list-devices List the detected OpenCL/CUDA devices and exit. Should be combined with -G or -U flag" << endl
-			<< "    -L, --dag-load-mode <mode> DAG generation mode." << endl
-			<< "        parallel    - load DAG on all GPUs at the same time (default)" << endl
-			<< "        sequential  - load DAG on GPUs one after another. Use this when the viner crashes during DAG generation" << endl
-			<< "        single <n>  - generate DAG on device n, then copy to other devices" << endl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #if ETH_ETHASHCL
-			<< " OpenCL configuration:" << endl
-			<< "    --cl-kernel <n>  Use a different OpenCL kernel (default: use stable kernel)" << endl
-			<< "        0: stable kernel" << endl
-			<< "        1: unstable kernel" << endl
+
+
+
+
 //			<< "        2: experimental kernel" << endl
-			<< "    --cl-local-work Set the OpenCL local work size. Default is " << CLVider::c_defaultLocalWorkSize << endl
-			<< "    --cl-global-work Set the OpenCL global work size as a multiple of the local work size. Default is " << CLVider::c_defaultGlobalWorkSizeMultiplier << " * " << CLVider::c_defaultLocalWorkSize << endl
-			<< "    --cl-parallel-hash <1 2 ..8> Define how many threads to associate per hash. Default=8" << endl
+
+
+
 #endif
 #if ETH_ETHASHCUDA
-			<< " CUDA configuration:" << endl
-			<< "    --cuda-block-size Set the CUDA block work size. Default is " << toString(CUDAViner::c_defaultBlockSize) << endl
-			<< "    --cuda-grid-size Set the CUDA grid size. Default is " << toString(CUDAViner::c_defaultGridSize) << endl
-			<< "    --cuda-streams Set the number of CUDA streams. Default is " << toString(CUDAViner::c_defaultNumStreams) << endl
-			<< "    --cuda-schedule <mode> Set the schedule mode for CUDA threads waiting for CUDA devices to finish work. Default is 'sync'. Possible values are:" << endl
-			<< "        auto  - Uses a heuristic based on the number of active CUDA contexts in the process C and the number of logical processors in the system P. If C > P, then yield else spin." << endl
-			<< "        spin  - Instruct CUDA to actively spin when waiting for results from the device." << endl
-			<< "        yield - Instruct CUDA to yield its thread when waiting for results from the device." << endl
-			<< "        sync  - Instruct CUDA to block the CPU thread on a synchronization primitive when waiting for the results from the device." << endl
-			<< "    --cuda-devices <0 1 ..n> Select which CUDA GPUs to mine on. Default is to use all" << endl
-			<< "    --cuda-parallel-hash <1 2 ..8> Define how many hashes to calculate in a kernel, can be scaled to achieve better performance. Default=4" << endl
+
+
+
+
+
+
+
+
+
+
+
 #endif
 #if API_CORE
-			<< " API core configuration:" << endl
-			<< "    --api-port Set the api port, the viner should listen to. Use 0 to disable. Default=0, use negative numbers to run in readonly mode. for example -3333." << endl
+
+
 #endif
 			;
 	}
