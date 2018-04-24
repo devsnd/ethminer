@@ -1,13 +1,13 @@
 #ifndef _APISERVER_H_
 #define _APISERVER_H_
 
-#include <libethcore/Farm.h>
-#include <libethcore/Miner.h>
+#include <libvthcore/Farm.h>
+#include <libvthcore/Miner.h>
 #include <jsonrpccpp/server.h>
 
 using namespace jsonrpc;
 using namespace dev;
-using namespace dev::eth;
+using namespace dev::vth;
 using namespace std::chrono;
 
 class ApiServer : public AbstractServer<ApiServer>

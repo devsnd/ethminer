@@ -2,13 +2,13 @@
 #define _API_H_
 
 #include "ApiServer.h"
-#include <libethcore/Farm.h>
-#include <libethcore/Miner.h>
+#include <libvthcore/Farm.h>
+#include <libvthcore/Miner.h>
 #include <jsonrpccpp/server/connectors/tcpsocketserver.h>
 
 using namespace jsonrpc;
 using namespace dev;
-using namespace dev::eth;
+using namespace dev::vth;
 
 class Api
 {

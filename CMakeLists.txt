@@ -40,7 +40,7 @@ if(HUNTER_ENABLED)
 endif()
 
 
-project(ethminer)
+project(vthviner)
 set(PROJECT_VERSION 0.13.0)
 
 # link_directories interprate relative paths with respect to CMAKE_CURRENT_SOURCE_DIR
@@ -144,22 +144,22 @@ include(EthCompilerSettings)
 createBuildInfo()
 
 add_subdirectory(libdevcore)
-add_subdirectory(libethash)
+add_subdirectory(libvthash)
 add_subdirectory(libhwmon)
 if (ETHASHCL)
-	add_subdirectory(libethash-cl)
+	add_subdirectory(libvthash-cl)
 endif ()
 if (ETHASHCUDA)
-	add_subdirectory(libethash-cuda)
+	add_subdirectory(libvthash-cuda)
 endif ()
 if(ETHSTRATUM)
-	add_subdirectory(libstratum)
+	add_subdirectory(libvtratum)
 endif()
 if (APICORE)
 	add_subdirectory(libapicore)
 endif()
-add_subdirectory(libethcore)
-add_subdirectory(ethminer)
+add_subdirectory(libvthcore)
+add_subdirectory(vthviner)
 
 
 if(WIN32)
