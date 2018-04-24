@@ -30,9 +30,6 @@ after_build:
     if ($env:configuration -ne "Release") {
       Get-Item build/vthviner-*-Windows.* | Rename-Item -NewName { $_.name -Replace 'vthviner','vthviner-dbg' }
     }
-    if (-not $env:appveyor_pull_request_number) {
-      cmake --build build --target hunter_upload_cache
-    }
 
 artifacts:
   - path: build/vthviner-*.zip
